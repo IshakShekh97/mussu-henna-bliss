@@ -71,7 +71,7 @@ const Navbar = () => {
             <DropdownMenuContent
               align="end"
               sideOffset={8}
-              className="min-w-[180px] p-1"
+              className="min-w-45 p-1"
             >
               {LINKS.map((link) => (
                 <DropdownMenuItem key={link.name} asChild>

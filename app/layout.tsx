@@ -5,9 +5,16 @@ import {
   Space_Grotesk,
   Playfair_Display,
 } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import SmoothScroll from "@/components/SmoothScroll";
+
+const morlana = localFont({
+  src: "../public/fonts/Moralana.woff", // Adjust the number of '../' based on your folder depth
+  display: "swap",
+  variable: "--font-morlana",
+});
 
 const playfairDisplayHeading = Playfair_Display({
   subsets: ["latin"],
@@ -57,6 +64,7 @@ export default function RootLayout({
         "font-sans",
         spaceGrotesk.variable,
         playfairDisplayHeading.variable,
+        morlana.variable,
       )}
     >
       <body className="min-h-full flex flex-col">
