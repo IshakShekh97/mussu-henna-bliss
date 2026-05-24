@@ -27,7 +27,7 @@ const Navbar = () => {
   const pathname = usePathname();
 
   return (
-    <header className="w-full sticky top-0 left-0 z-50  bg-background/70  backdrop-blur-xl">
+    <header className="w-full fixed top-0 left-0 z-50  bg-background/70  backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-360 border-b border-border/50  items-center justify-between px-3 py-2 sm:px-4 md:px-6">
         <div className="flex items-center gap-2 text-xl font-semibold font-serif">
           <span className="text-primary">{"Mussu's"}</span>

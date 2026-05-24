@@ -13,10 +13,7 @@ export default function SmoothScroll({ children }: SmoothScrollProps) {
       options={{
         autoRaf: true,
         smoothWheel: true,
-        syncTouch: true,
-        touchMultiplier: 1,
-        lerp: 0.09,
-        duration: 1.2,
+        // syncTouch: true
       }}
     >
       {children}
