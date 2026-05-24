@@ -21,6 +21,7 @@ const LINKS = [
   { name: "Home", href: "/", icon: HomeIcon },
   { name: "Shop", href: "/shop", icon: ShoppingBagIcon },
   { name: "Booking", href: "/book", icon: ClipboardClockIcon },
+  { name: "Gallery", href: "/gallery", icon: HomeIcon },
 ];
 
 const Navbar = () => {

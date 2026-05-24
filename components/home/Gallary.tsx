@@ -1,120 +1,96 @@
 "use client";
-import React, { useState } from "react";
 import Image from "next/image";
-import { Loader2 } from "lucide-react";
+import Link from "next/link";
 
 interface GalleryItem {
   id: string;
   customerName: string;
   imagePath: string;
-  imageWidth: number;
-  imageHeight: number;
+  subtitle: string;
 }
 
 const galleryItems: GalleryItem[] = [
   {
     id: "1",
     customerName: "Priya Sharma",
+    subtitle: "Bridal Mehendi",
     imagePath: "/images/hero-1.jpg",
-    imageWidth: 400,
-    imageHeight: 500,
   },
   {
     id: "2",
     customerName: "Anjali Verma",
+    subtitle: "Floral Motif",
     imagePath: "/images/hero-2.jpg",
-    imageWidth: 500,
-    imageHeight: 400,
   },
   {
     id: "3",
     customerName: "Neha Gupta",
+    subtitle: "Elegant Henna",
     imagePath: "/images/hero-3.jpg",
-    imageWidth: 450,
-    imageHeight: 450,
   },
   {
     id: "4",
     customerName: "Divya Patel",
+    subtitle: "Custom Design",
     imagePath: "/images/hero-4.jpg",
-    imageWidth: 350,
-    imageHeight: 550,
   },
 ];
 
 const Gallary = () => {
-  const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set());
-
-  const handleImageLoad = (id: string) => {
-    setLoadedImages((prev) => new Set(prev).add(id));
-  };
-
   return (
     <section className="w-full py-16 px-4 md:px-8 lg:px-16">
-      {/* Section Header */}
-      <div className="mb-16 text-center">
+      <div className="mb-14 text-center">
+        <p className="text-sm uppercase tracking-[0.35em] text-primary/80 font-medium mb-4">
+          Gallery
+        </p>
         <h2 className="text-4xl md:text-5xl lg:text-6xl font-morlana font-light mb-4">
-          <span className="text-primary font-black">Gallery </span>
-          of Artistry
+          Artistry in Every Stroke
         </h2>
-        <p className="text-base md:text-lg text-foreground/70 font-light max-w-2xl mx-auto">
-          Discover the intricate mehendi designs created for our beloved
-          clients. Each design tells a unique story of beauty and tradition.
+        <p className="text-base md:text-lg text-foreground/70 font-light max-w-3xl mx-auto">
+          Browse our curated collection of mehendi designs, each styled with
+          rich detail, soft curves, and luxurious composition for every
+          celebration.
         </p>
       </div>
 
-      {/* Gallery Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-0 auto-rows-max">
-        {galleryItems.map((item) => (
-          <div
+      <div className="grid grid-cols-2 md:grid-cols-4">
+        {galleryItems.map((item, index) => (
+          <article
             key={item.id}
-            className="group relative overflow-hidden rounded-none border border-border hover:border-primary/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/10"
+            className="group overflow-hidden  border border-border/60 bg-muted shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-2xl"
           >
-            {/* Image Container - Fixed aspect ratio */}
-            <div className="relative w-full aspect-3/4 bg-secondary overflow-hidden">
-              {!loadedImages.has(item.id) && (
-                <div className="absolute inset-0 flex items-center justify-center bg-secondary/50">
-                  <Loader2 className="w-6 h-6 animate-spin text-primary" />
-                </div>
-              )}
-
+            <div className="relative aspect-3/4 overflow-hidden bg-slate-100">
               <Image
                 src={item.imagePath}
-                alt={`Mehendi design for ${item.customerName}`}
+                alt={`Mehendi design by ${item.customerName}`}
                 fill
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
-                className={`object-cover transition-transform duration-300 group-hover:scale-105 ${
-                  loadedImages.has(item.id) ? "opacity-100" : "opacity-0"
-                }`}
-                onLoad={() => handleImageLoad(item.id)}
-                priority={parseInt(item.id) <= 4}
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                className="object-cover transition duration-500 group-hover:scale-105"
+                priority={index < 4}
               />
-
-              {/* Overlay Gradient */}
-              <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-linear-to-t from-black/60 to-transparent" />
             </div>
-
-            {/* Customer Name Badge */}
-            <div className="relative px-4 py-3 bg-card border-t border-border">
-              <p className="text-sm md:text-base font-serif text-foreground font-medium truncate">
+            <div className="p-5">
+              <p className="text-xs uppercase tracking-[0.25em] text-foreground/60 mb-2">
+                {item.subtitle}
+              </p>
+              <h3 className="text-lg font-semibold text-foreground">
                 {item.customerName}
-              </p>
-              <p className="text-xs text-foreground/60 font-light mt-1">
-                Mehendi Art
-              </p>
+              </h3>
             </div>
-          </div>
+          </article>
         ))}
       </div>
 
-      {/* Footer CTA */}
       <div className="mt-16 text-center">
         <p className="text-lg text-foreground/70 font-light mb-6">
           Want to see more designs or book your appointment?
         </p>
-        <button className="px-8 py-3 bg-primary text-primary-foreground rounded-md font-medium hover:bg-primary/90 transition-colors duration-300">
-          Explore More
-        </button>
+        <Link href="/gallery">
+          <button className="px-8 py-3 bg-primary text-primary-foreground rounded-md font-medium hover:bg-primary/90 transition-colors duration-300">
+            Explore More
+          </button>
+        </Link>
       </div>
     </section>
   );

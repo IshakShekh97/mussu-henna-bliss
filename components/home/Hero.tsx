@@ -40,39 +40,38 @@ const Hero = () => {
           </div>
         </div>
 
-        {/* Right Column */}
-        <div className="h-full w-4xl flex items-center lg:justify-center col-span-1 lg:col-span-3 gap-3">
-          <div className="relative h-[80%] lg:w-[28%] md:h-100 md:w-[23%] w-[17%] rounded-[25rem] overflow-hidden">
+        <div className="h-full w-full flex items-center justify-center col-span-1 lg:col-span-3 gap-6">
+          <div className="relative h-[80%] max-sm:h-[80%] lg:w-[24%] md:h-100 md:w-[23%] w-[38%] rounded-[25rem] overflow-hidden">
             <Image
               src={"/images/hero-2.jpg"}
               alt="Hero Image"
               fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              sizes="(max-width: 768px) 30vw, (max-width: 1200px) 20vw, 18vw"
               className="p-3 rounded-[25rem] object-top"
             />
           </div>
 
-          <div className="relative lg:h-full lg:w-[34%] md:h-120 md:w-[25%] h-80 w-[20%] rounded-[25rem] overflow-hidden border-2 border-primary">
+          {/* Center (prominent) - always visible */}
+          <div className="relative lg:h-full lg:w-[34%] md:h-120 md:w-[28%] h-80 max-sm:h-88 w-[45%] rounded-[25rem] overflow-hidden border-2 border-primary">
             <Image
               src={"/images/hero-1.jpg"}
               alt="Hero Image"
               fill
-              sizes="(max-width: 768px) 20vw, (max-width: 1200px) 25vw, 34vw"
+              sizes="(max-width: 768px) 50vw, (max-width: 1200px) 35vw, 34vw"
               className="p-3 rounded-[25rem] object-top"
             />
           </div>
 
-          <div className="relative h-[70%] lg:w-[24%] md:h-80 md:w-[20%] w-[15%] rounded-[25rem] overflow-hidden">
+          <div className="relative hidden md:block h-[80%] lg:w-[24%] md:h-100 md:w-[23%] w-[18%] rounded-[25rem] overflow-hidden">
             <Image
               src={"/images/hero-3.jpg"}
               alt="Hero Image"
               fill
-              sizes="(max-width: 768px) 15vw, (max-width: 1200px) 20vw, 24vw"
+              sizes="(max-width: 768px) 0vw, (max-width: 1200px) 20vw, 18vw"
               className="p-3 rounded-[25rem] object-top"
             />
           </div>
         </div>
-        {/* Right Column */}
       </section>
     </main>
   );
