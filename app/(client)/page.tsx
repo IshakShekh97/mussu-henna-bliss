@@ -1,5 +1,6 @@
 import Gallary from "@/components/home/Gallary";
 import Hero from "@/components/home/Hero";
+import MeetArtist from "@/components/home/MeetArtist";
 import Services from "@/components/home/Services";
 import ShoppableProducts from "@/components/home/ShoppableProducts";
 import TrustBanner from "@/components/home/TrsustBanner";
@@ -15,6 +16,7 @@ const HomePage = () => {
       <Welcome />
       <Gallary />
       <Services />
+      <MeetArtist />
     </div>
   );
 };
