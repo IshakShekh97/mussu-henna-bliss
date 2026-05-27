@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { Mail, Phone, BadgeX, Heart } from "lucide-react";
+import TulipSeprator from "./TulipSeprator";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -149,7 +150,7 @@ const Footer = () => {
         </div>
 
         {/* Divider */}
-        <div className="h-px bg-linear-to-r from-transparent via-white/20 to-transparent mb-8" />
+        <TulipSeprator sepratorColor="bg-white" tulipColor="text-white" />
 
         {/* Bottom Section */}
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4">

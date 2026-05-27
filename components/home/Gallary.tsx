@@ -38,7 +38,7 @@ const galleryItems: GalleryItem[] = [
 
 const Gallary = () => {
   return (
-    <section className="w-full py-16 px-4 md:px-8 lg:px-16">
+    <section className="w-full py-16">
       <div className="mb-14 text-center">
         <p className="text-sm uppercase tracking-[0.35em] text-primary/80 font-medium mb-4">
           Gallery

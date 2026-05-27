@@ -1,3 +1,4 @@
+import TulipSeprator from "@/components/common/TulipSeprator";
 import Gallary from "@/components/home/Gallary";
 import Hero from "@/components/home/Hero";
 import MeetArtist from "@/components/home/MeetArtist";
@@ -16,7 +17,9 @@ const HomePage = () => {
       <Welcome />
       <Gallary />
       <Services />
+      <TulipSeprator variant="wavy" />
       <MeetArtist />
+      <TulipSeprator variant="wavy" />
     </div>
   );
 };

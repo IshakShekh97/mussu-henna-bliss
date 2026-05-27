@@ -19,7 +19,7 @@ const TrustBanner = () => {
   ];
 
   return (
-    <div className="w-full py-8 px-4 sm:px-6">
+    <div className="w-full py-16">
       <div className="flex flex-col gap-6 items-center justify-center sm:flex-row sm:gap-8 sm:justify-around">
         {trustItems.map((item, index) => {
           const IconComponent = item.icon;

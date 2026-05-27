@@ -30,7 +30,7 @@ const MeetArtist = () => {
   ];
 
   return (
-    <section className="w-full py-20 px-4 md:px-8 lg:px-16 bg-linear-to-b from-transparent via-primary/5 to-transparent">
+    <section className="w-full py-20">
       {/* Section Header */}
       <div className="mb-16 text-center max-w-3xl mx-auto">
         <div className="text-lg font-light mb-4 font-serif">

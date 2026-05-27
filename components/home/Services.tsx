@@ -43,7 +43,7 @@ const Services = () => {
   ];
 
   return (
-    <section className="w-full py-20 px-4 md:px-8 lg:px-16">
+    <section className="w-full py-10">
       {/* Section Header */}
       <div className="mb-16 text-center max-w-3xl mx-auto">
         <div className="text-lg font-light mb-4 font-serif">
@@ -194,30 +194,6 @@ const Services = () => {
               <Link href="/book">Inquire Now</Link>
             </Button>
           </div>
-        </div>
-      </div>
-
-      {/* Bottom CTA Section */}
-      <div className="mt-16 bg-linear-to-r from-primary/10 to-primary/5 rounded-3xl p-8 md:p-12 text-center border border-primary/20">
-        <h3 className="font-morlana text-3xl md:text-4xl font-light mb-4">
-          Ready to Book Your{" "}
-          <span className="text-primary font-black">Experience</span>?
-        </h3>
-        <p className="text-muted-foreground font-light text-base md:text-lg mb-8 max-w-2xl mx-auto">
-          Each service is customized to your vision. Check availability and
-          request your quote today.
-        </p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button className="rounded-full px-8 py-3" asChild>
-            <Link href="/book">View Calendar</Link>
-          </Button>
-          <Button
-            variant="outline"
-            className="rounded-full px-8 py-3 border-primary/50 hover:bg-primary/10"
-            asChild
-          >
-            <Link href="/contact">Contact Us</Link>
-          </Button>
         </div>
       </div>
     </section>

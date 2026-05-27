@@ -7,7 +7,7 @@ import Image from "next/image";
 const Hero = () => {
   return (
     <main>
-      <section className="w-full overflow-hidden grid grid-cols-1 lg:grid-cols-5 items-center gap-10 py-20 px-4 md:px-8 lg:px-16">
+      <section className="w-full overflow-hidden grid grid-cols-1 lg:grid-cols-5 items-center gap-10 ">
         {/* Left Column */}
         <div className="w-full h-full flex flex-col items-start justify-center col-span-1 lg:col-span-2">
           {/* Top Heading */}

@@ -46,7 +46,7 @@ const ShoppableProducts = () => {
   };
 
   return (
-    <section className="w-full py-16 px-4 md:px-8 lg:px-16">
+    <section className="w-full py-16">
       {/* Section Header */}
       <div className="mb-14 text-center">
         <h2 className="text-4xl md:text-5xl lg:text-6xl font-morlana font-light mb-4">
