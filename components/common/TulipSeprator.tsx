@@ -5,6 +5,7 @@ interface TulipSepratorProps {
   sepratorColor?: string;
   tulipColor?: string;
   variant?: "straight" | "wavy";
+  className?: string;
 }
 
 const WavySeparator = ({ color }: { color: string }) => {
@@ -30,12 +31,15 @@ const TulipSeprator = ({
   sepratorColor,
   tulipColor,
   variant = "straight",
+  className,
 }: TulipSepratorProps) => {
   const color = sepratorColor ? sepratorColor : "var(--color-accent)";
   const accentClass = sepratorColor ? "" : "bg-accent";
 
   return (
-    <div className="flex items-center justify-center gap-3 py-4">
+    <div
+      className={clsx("flex items-center justify-center gap-3 py-4", className)}
+    >
       {variant === "wavy" ? (
         <WavySeparator color={color} />
       ) : (
