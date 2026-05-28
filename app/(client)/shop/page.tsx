@@ -51,7 +51,7 @@ const Shoppage = () => {
               <h3 className="font-serif text-gray-800 text-base md:text-lg font-medium">
                 100% Natural & PPD-Free
               </h3>
-              <p className="text-xs text-muted-foreground mt-1.5 font-light leading-relaxed max-w-[240px] mx-auto">
+              <p className="text-xs text-muted-foreground mt-1.5 font-light leading-relaxed max-w-60 mx-auto">
                 No chemicals or synthetic dyes. Pure, organic henna safe for all
                 skin types.
               </p>
@@ -67,7 +67,7 @@ const Shoppage = () => {
               <h3 className="font-serif text-gray-800 text-base md:text-lg font-medium">
                 Freshly Made to Order
               </h3>
-              <p className="text-xs text-muted-foreground mt-1.5 font-light leading-relaxed max-w-[240px] mx-auto">
+              <p className="text-xs text-muted-foreground mt-1.5 font-light leading-relaxed max-w-60 mx-auto">
                 Cones are prepared in fresh batches to ensure ultimate
                 consistency and stain intensity.
               </p>
@@ -83,7 +83,7 @@ const Shoppage = () => {
               <h3 className="font-serif text-gray-800 text-base md:text-lg font-medium">
                 Buttery Smooth Flow
               </h3>
-              <p className="text-xs text-muted-foreground mt-1.5 font-light leading-relaxed max-w-[240px] mx-auto">
+              <p className="text-xs text-muted-foreground mt-1.5 font-light leading-relaxed max-w-60 mx-auto">
                 Double-filtered paste for a smooth, clog-free, and effortless
                 design flow.
               </p>
