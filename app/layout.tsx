@@ -9,6 +9,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import SmoothScroll from "@/components/SmoothScroll";
+import { Toaster } from "@/components/ui/sonner";
 
 const morlana = localFont({
   src: "../public/fonts/Moralana.woff", // Adjust the number of '../' based on your folder depth
@@ -69,6 +70,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <SmoothScroll>{children}</SmoothScroll>
+        <Toaster position="top-left" richColors />
       </body>
     </html>
   );

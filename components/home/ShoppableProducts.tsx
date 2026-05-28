@@ -68,8 +68,8 @@ const ShoppableProducts = () => {
           ready to create magic!
         </p>
         <div className="flex items-center justify-center gap-4">
-          <Button size={"lg"} className="rounded px-8 py-3">
-            View Full Shop
+          <Button asChild size={"lg"} className="rounded px-8 py-3">
+            <Link href={"/shop"}>View Full Shop</Link>
           </Button>
           <Link href={"/book"}>
             <Button

@@ -31,10 +31,13 @@ const Navbar = () => {
   return (
     <header className="w-full fixed top-0 left-0 z-50">
       <div className="mx-auto flex h-20 max-w-360 items-center justify-between px-3 py-2 sm:px-4 md:px-6">
-        <div className="flex items-center gap-2 text-xl font-semibold font-serif bg-background/40 backdrop-blur-md border border-black/20 h-12 px-4 rounded-full">
+        <Link
+          href={"/"}
+          className="flex items-center gap-2 text-xl font-semibold font-serif bg-background/40 backdrop-blur-md border border-black/20 h-12 px-4 rounded-full"
+        >
           <span className="text-primary">{"Mussu's"}</span>
           <span>Henna Bliss</span>
-        </div>
+        </Link>
 
         <nav className="items-center justify-center gap-8 text-lg font-semibold flex md:bg-background/10 md:backdrop-blur-md md:border md:border-black/20 md:h-16 md:px-7 rounded-full">
           <div className="hidden md:flex items-center justify-center gap-8 text-lg font-semibold">

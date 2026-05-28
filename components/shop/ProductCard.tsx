@@ -1,6 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Flower, ShoppingCart } from "lucide-react";
+import TulipSeprator from "../common/TulipSeprator";
 
 type Product = {
   id: string;
@@ -57,19 +58,21 @@ export default function ProductCard({ product }: { product: Product }) {
         </div>
       </div>
 
+      <h3
+        className="text-gray-800 font-medium text-[1rem] text-center sm:text-[1.05rem] leading-tight flex-1"
+        style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+      >
+        {product.name}
+      </h3>
+
+      <TulipSeprator variant="wavy" />
       {/* Product Info */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-auto pt-2 px-1 z-10 w-full">
-        <h3
-          className="text-gray-800 font-medium text-[1rem] max-sm:text-center sm:text-[1.05rem] leading-tight flex-1"
-          style={{ fontFamily: "'Space Grotesk', sans-serif" }}
-        >
-          {product.name}
-        </h3>
+      <div className="flex flex-col mt-auto pt-2 px-1 z-10 w-full">
         {/* Add to Cart Button */}
         <motion.button
           whileTap={{ scale: 0.95 }}
           whileHover={{ scale: 1.05 }}
-          className="flex items-center justify-center gap-1.5 py-2 px-3 sm:px-4 bg-[#E2A6A6] hover:bg-[#D49595] text-white rounded-md font-medium text-sm transition-colors focus:ring-2 focus:ring-offset-2 focus:ring-[#E2A6A6] focus:outline-none shadow-sm shrink-0 w-full sm:w-auto"
+          className="flex items-center justify-center gap-1.5 py-2 px-3 sm:px-4 bg-primary/80 hover:bg-primary text-white rounded-md font-medium text-sm transition-colors focus:ring-2 focus:ring-offset-2 focus:ring-[#E2A6A6] focus:outline-none shadow-sm shrink-0 w-full sm:w-auto"
         >
           <ShoppingCart size={15} />
           <span>Add</span>
