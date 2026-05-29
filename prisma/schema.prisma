@@ -1,0 +1,108 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  // provider = "postgresql"
+  provider = "sqlite"
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  FULFILLED
+  CANCELLED
+}
+
+enum BookingStatus {
+  PENDING_QUOTE
+  QUOTED
+  ACCEPTED
+  COMPLETED
+  CANCELLED
+}
+
+// --- MODELS ---
+
+model Product {
+  id          String  @id @default(uuid())
+  name        String
+  description String
+  price       Float // Stored in INR (e.g., 250.00)
+  category    String // e.g., "Bridal", "Practice", "Nail"
+  imageUrl    String? // URL to the image hosted on Supabase Storage/Cloudinary
+  inStock     Boolean @default(true) // Easy toggle for the dashboard
+
+  orderItems OrderItem[] // Relation to track which orders bought this product
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Order {
+  id String @id @default(uuid()) // Used for /status/order-[id]
+
+  // Customer Details (No-Auth)
+  customerName String
+  email        String
+  phone        String
+  address      String
+
+  totalAmount Float
+  status      OrderStatus @default(PENDING)
+
+  // Relation to the items purchased
+  items OrderItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model OrderItem {
+  id String @id @default(uuid())
+
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+
+  quantity        Int
+  priceAtPurchase Float // Crucial: Locks in the price at the time of order in case you change the product price later
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+model Booking {
+  id String @id @default(uuid()) // Used for /status/booking-[id]
+
+  // Customer Details (No-Auth)
+  customerName String
+  email        String
+  phone        String
+
+  // Event Details
+  eventType   String // e.g., "Bridal", "Guest", "Photoshoot"
+  eventDate   DateTime
+  location    String
+  guestCount  Int? // Estimated number of people
+  designNotes String?
+  //  @db.Text // User's vision/requirements
+
+  // Dashboard & Quote Management
+  quotedPrice Float? // Null initially, filled by the artist later
+  artistNotes String?
+  //  @db.Text // Message from artist (e.g., "I'm available at 2 PM instead")
+  status      BookingStatus @default(PENDING_QUOTE)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Admin {
+  id       String @id @default(uuid())
+  email    String @unique
+  password String // Hashed password for simple NextAuth credentials login
+}

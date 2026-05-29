@@ -2,6 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Flower, ShoppingCart } from "lucide-react";
 import TulipSeprator from "../common/TulipSeprator";
+import AddToCardButtonWrapper from "../cart/AddToCardButtonWrapper";
 
 type Product = {
   id: string;
@@ -69,14 +70,21 @@ export default function ProductCard({ product }: { product: Product }) {
       {/* Product Info */}
       <div className="flex flex-col mt-auto pt-2 px-1 z-10 w-full">
         {/* Add to Cart Button */}
-        <motion.button
-          whileTap={{ scale: 0.95 }}
-          whileHover={{ scale: 1.05 }}
-          className="flex items-center justify-center gap-1.5 py-2 px-3 sm:px-4 bg-primary/80 hover:bg-primary text-white rounded-md font-medium text-sm transition-colors focus:ring-2 focus:ring-offset-2 focus:ring-[#E2A6A6] focus:outline-none shadow-sm shrink-0 w-full sm:w-auto"
+        <AddToCardButtonWrapper
+          productId={product.id}
+          productImageUrl={product.imagePath as string}
+          productName={product.name}
+          productPrice={product.price}
         >
-          <ShoppingCart size={15} />
-          <span>Add</span>
-        </motion.button>
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.05 }}
+            className="flex items-center justify-center gap-1.5 py-2 px-3 sm:px-4 bg-primary/80 hover:bg-primary text-white rounded-md font-medium text-sm transition-colors focus:ring-2 focus:ring-offset-2 focus:ring-[#E2A6A6] focus:outline-none shadow-sm shrink-0 w-full sm:w-auto"
+          >
+            <ShoppingCart size={15} />
+            <span>Add</span>
+          </motion.button>
+        </AddToCardButtonWrapper>
       </div>
     </motion.div>
   );

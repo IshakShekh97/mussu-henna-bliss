@@ -17,6 +17,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "../ui/button";
+import CartButton from "../cart/AddToCartButton";
 
 const LINKS = [
   { name: "Home", href: "/", icon: HomeIcon },
@@ -58,12 +59,7 @@ const Navbar = () => {
           </div>
 
           <div className="flex items-center gap-3">
-            <button
-              type="button"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-background/10 backdrop-blur-md border border-border/20 text-foreground shadow-sm transition "
-            >
-              <ShoppingCart className="h-5 w-5" />
-            </button>
+            <CartButton />
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
