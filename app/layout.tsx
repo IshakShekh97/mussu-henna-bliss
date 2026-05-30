@@ -70,7 +70,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <SmoothScroll>{children}</SmoothScroll>
-        <Toaster position="top-left" richColors />
+        <Toaster position="bottom-center" richColors />
       </body>
     </html>
   );

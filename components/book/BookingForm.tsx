@@ -1,10 +1,9 @@
 "use client";
 
-import * as React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
-import * as z from "zod";
+import z from "zod";
 import { Sparkles, Users, Calendar, Plus, Minus, Send } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -19,34 +18,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { DateTimePicker } from "./DateTimePicker";
 import { cn } from "@/lib/utils";
 import TulipSeprator from "../common/TulipSeprator";
-
-// Form Validation Schema
-const bookingSchema = z.object({
-  occasion: z.enum(["bridal", "guest", "festive"]),
-  date: z.date({
-    message: "Please select a date for your event.",
-  }),
-  time: z.string().min(1, "Please select a start time."),
-  location: z.string().min(5, "Event location must be at least 5 characters."),
-  peopleCount: z.number().min(1, "At least 1 person is required."),
-  vision: z
-    .string()
-    .min(10, "Please describe your vision in at least 10 characters.")
-    .max(1000, "Vision description cannot exceed 1000 characters."),
-  fullName: z.string().min(2, "Full name must be at least 2 characters."),
-  whatsapp: z
-    .string()
-    .min(10, "WhatsApp number must be at least 10 digits.")
-    .regex(/^\+?[0-9\s-]{10,15}$/, "Please enter a valid phone number."),
-  email: z.string().email("Please enter a valid email address."),
-});
-
-type BookingFormValues = z.infer<typeof bookingSchema>;
+import { useState } from "react";
+import { bookingFormSchemaType, bookingSchema } from "@/lib/zodSchemas";
 
 export function BookingForm() {
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const form = useForm<BookingFormValues>({
+  const form = useForm<bookingFormSchemaType>({
     resolver: zodResolver(bookingSchema),
     defaultValues: {
       occasion: "bridal",
@@ -84,7 +62,7 @@ export function BookingForm() {
     },
   ] as const;
 
-  async function onSubmit(data: BookingFormValues) {
+  async function onSubmit(data: bookingFormSchemaType) {
     setIsSubmitting(true);
     // Simulate API request
     await new Promise((resolve) => setTimeout(resolve, 1500));

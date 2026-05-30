@@ -12,6 +12,7 @@ import { useCartStore } from "@/lib/cartStore";
 import { Trash2, Plus, Minus, ShoppingBag } from "lucide-react";
 import Image from "next/image";
 import { Button } from "../ui/button";
+import Link from "next/link";
 
 interface CartProps {
   children: React.ReactNode;
@@ -159,8 +160,11 @@ const Cart = ({ children }: CartProps) => {
                 <span className="text-primary">₹{subtotal.toFixed(2)}</span>
               </div>
             </div>
-            <Button className="w-full py-6 rounded-xl text-md font-semibold tracking-wide shadow-md">
-              Proceed to Checkout
+            <Button
+              asChild
+              className="w-full py-6 rounded-xl text-md font-semibold tracking-wide shadow-md"
+            >
+              <Link href="/checkout">Proceed to Checkout</Link>
             </Button>
           </div>
         )}

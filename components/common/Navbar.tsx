@@ -6,6 +6,7 @@ import {
   HomeIcon,
   MenuIcon,
   ShoppingBagIcon,
+  Search,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -17,12 +18,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "../ui/button";
 import CartButton from "../cart/AddToCartButton";
+import Image from "next/image";
 
 const LINKS = [
   { name: "Home", href: "/", icon: HomeIcon },
   { name: "Shop", href: "/shop", icon: ShoppingBagIcon },
   { name: "Booking", href: "/book", icon: ClipboardClockIcon },
   { name: "Gallery", href: "/gallery", icon: HomeIcon },
+  { name: "Track Order", href: "/status", icon: Search },
 ];
 
 const Navbar = () => {
@@ -33,10 +36,11 @@ const Navbar = () => {
       <div className="mx-auto flex h-20 max-w-360 items-center justify-between px-3 py-2 sm:px-4 md:px-6">
         <Link
           href={"/"}
-          className="flex items-center gap-2 text-xl font-semibold font-serif bg-background/40 backdrop-blur-md border border-black/20 h-12 px-4 rounded-full"
+          className="flex items-center gap-2 text-base md:text-xl font-semibold font-serif bg-background/40 backdrop-blur-md border border-black/20 h-12 px-4 rounded-full"
         >
           <span className="text-primary">{"Mussu's"}</span>
           <span>Henna Bliss</span>
+          {/* <Image src={"/logo.jpg"} height={50} width={50} alt="Logo" /> */}
         </Link>
 
         <nav className="items-center justify-center gap-8 text-lg font-semibold flex md:bg-background/10 md:backdrop-blur-md md:border md:border-black/20 md:h-16 md:px-7 rounded-full">
