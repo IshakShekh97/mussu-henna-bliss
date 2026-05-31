@@ -1,62 +1,23 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Loader2, ArrowRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldLabel,
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 import { useCartStore } from "@/lib/cartStore";
 import { checkoutSchema, checkoutFormSchemaType } from "@/lib/zodSchemas";
 import { checkoutCart } from "@/app/actions/checkout.action";
-import { cn } from "@/lib/utils";
-
-// Reusable Floating Label Input using Geist Font
-interface FloatingInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  label: string;
-  error?: string;
-}
-
-const FloatingInput = React.forwardRef<HTMLInputElement, FloatingInputProps>(
-  ({ className, label, error, type = "text", id, ...props }, ref) => {
-    return (
-      <div className="relative font-[family-name:var(--font-geist-sans)] w-full">
-        <input
-          type={type}
-          id={id}
-          ref={ref}
-          placeholder=" "
-          className={cn(
-            "peer block w-full rounded-xl border border-[#EBE4DC] bg-white px-3.5 pt-5 pb-1.5 text-sm text-gray-800 transition-all outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500 placeholder:text-transparent",
-            error &&
-              "border-destructive focus:border-destructive focus:ring-destructive",
-            className,
-          )}
-          {...props}
-        />
-        <label
-          htmlFor={id}
-          className={cn(
-            "absolute left-3.5 top-1.5 z-10 origin-[0] -translate-y-1.5 scale-75 transform text-xs text-muted-foreground duration-150 pointer-events-none",
-            "peer-placeholder-shown:translate-y-3.5 peer-placeholder-shown:scale-100 peer-placeholder-shown:text-sm",
-            "peer-focus:-translate-y-1.5 peer-focus:scale-75 peer-focus:text-pink-500",
-            error && "peer-focus:text-destructive text-destructive/80",
-          )}
-        >
-          {label}
-        </label>
-        {error && (
-          <p className="text-[11px] text-destructive mt-1 font-sans font-medium pl-1">
-            {error}
-          </p>
-        )}
-      </div>
-    );
-  },
-);
-FloatingInput.displayName = "FloatingInput";
 
 export default function CheckoutForm() {
   const router = useRouter();
@@ -76,16 +37,10 @@ export default function CheckoutForm() {
       items: [],
       totalAmount: 0,
     },
-    mode: "onSubmit",
+    mode: "onBlur",
   });
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    setValue,
-    reset,
-  } = form;
+  const { control, handleSubmit, setValue, reset } = form;
 
   // Mount safety check for Zustand hydration
   useEffect(() => {
@@ -164,7 +119,7 @@ export default function CheckoutForm() {
   }
 
   return (
-    <div className="bg-[#FDFBF7] rounded-3xl border border-[#EBE4DC] p-6 md:p-8 relative overflow-hidden shadow-sm font-[family-name:var(--font-geist-sans)]">
+    <div className="bg-[#FDFBF7] rounded-3xl border border-[#EBE4DC] p-6 md:p-8 relative overflow-hidden shadow-sm font-sans">
       {/* Vintage Corner Flourishes */}
       <div className="absolute top-3 left-3 text-[#D4C3B3] pointer-events-none">
         <div className="w-1.5 h-1.5 rounded-full bg-[#D4C3B3]" />
@@ -190,33 +145,111 @@ export default function CheckoutForm() {
           </span>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="space-y-3.5">
-            <FloatingInput
-              id="customerName"
-              label="Full Name"
-              error={errors.customerName?.message}
-              {...register("customerName")}
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <div className="space-y-4">
+            <Controller
+              name="customerName"
+              control={control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel
+                    htmlFor="checkout-name"
+                    className="text-sm font-medium text-foreground"
+                  >
+                    Full Name
+                  </FieldLabel>
+                  <Input
+                    {...field}
+                    id="checkout-name"
+                    placeholder="Enter your full name"
+                    aria-invalid={fieldState.invalid}
+                    className="h-10 rounded-lg focus-visible:ring-ring/50 border-input bg-transparent"
+                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
             />
-            <FloatingInput
-              id="phone"
-              label="WhatsApp Number (10-digit Indian Number)"
-              type="tel"
-              error={errors.phone?.message}
-              {...register("phone")}
+
+            <Controller
+              name="phone"
+              control={control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel
+                    htmlFor="checkout-phone"
+                    className="text-sm font-medium text-foreground"
+                  >
+                    WhatsApp Number
+                  </FieldLabel>
+                  <Input
+                    {...field}
+                    id="checkout-phone"
+                    type="tel"
+                    placeholder="E.g., 9876543210"
+                    aria-invalid={fieldState.invalid}
+                    className="h-10 rounded-lg focus-visible:ring-ring/50 border-input bg-transparent"
+                  />
+                  <FieldDescription className="text-xs text-muted-foreground">
+                    10-digit Indian Number.
+                  </FieldDescription>
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
             />
-            <FloatingInput
-              id="email"
-              label="Email Address"
-              type="email"
-              error={errors.email?.message}
-              {...register("email")}
+
+            <Controller
+              name="email"
+              control={control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel
+                    htmlFor="checkout-email"
+                    className="text-sm font-medium text-foreground"
+                  >
+                    Email Address
+                  </FieldLabel>
+                  <Input
+                    {...field}
+                    id="checkout-email"
+                    type="email"
+                    placeholder="Enter your email address"
+                    aria-invalid={fieldState.invalid}
+                    className="h-10 rounded-lg focus-visible:ring-ring/50 border-input bg-transparent"
+                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
             />
-            <FloatingInput
-              id="address"
-              label="Delivery Address"
-              error={errors.address?.message}
-              {...register("address")}
+
+            <Controller
+              name="address"
+              control={control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel
+                    htmlFor="checkout-address"
+                    className="text-sm font-medium text-foreground"
+                  >
+                    Delivery Address
+                  </FieldLabel>
+                  <Input
+                    {...field}
+                    id="checkout-address"
+                    placeholder="E.g., Flat 402, Building A, Main Street"
+                    aria-invalid={fieldState.invalid}
+                    className="h-10 rounded-lg focus-visible:ring-ring/50 border-input bg-transparent"
+                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
             />
           </div>
 

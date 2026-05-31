@@ -48,5 +48,11 @@ export const checkoutSchema = z.object({
   totalAmount: z.number().min(0, "Total amount must be a positive number"),
 });
 
+export const loginSchema = z.object({
+  email: z.email("Please enter a valid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+});
+
+export type LoginFormSchemaType = z.infer<typeof loginSchema>;
 export type bookingFormSchemaType = z.infer<typeof bookingSchema>;
 export type checkoutFormSchemaType = z.infer<typeof checkoutSchema>;
