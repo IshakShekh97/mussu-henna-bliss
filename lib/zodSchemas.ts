@@ -136,3 +136,16 @@ export type LoginFormSchemaType = z.infer<typeof loginSchema>;
 export type bookingFormSchemaType = z.infer<typeof bookingSchema>;
 export type checkoutFormSchemaType = z.infer<typeof checkoutSchema>;
 export type manualBookingSchemaType = z.infer<typeof manualBookingSchema>;
+
+export const productSchema = z.object({
+  name: z.string().min(2, "Product name must be at least 2 characters."),
+  description: z.string().min(5, "Description must be at least 5 characters."),
+  price: z.number().min(0, "Price must be a positive number."),
+  stock: z.number().int().min(0, "Stock must be a non-negative integer."),
+  category: z.string().min(1, "Please select a category."),
+  imageUrl: z.string().min(1, "Image is required."),
+  inStock: z.boolean(),
+});
+
+export type ProductFormSchemaType = z.infer<typeof productSchema>;
+

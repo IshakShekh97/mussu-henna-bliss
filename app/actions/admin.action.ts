@@ -280,19 +280,8 @@ export async function getInventoryWatch() {
   try {
     const dbProducts = await prisma.product.findMany();
 
-    // Map each product to a deterministic stock count based on its ID hash to avoid schema migration
-    const productsWithStock = dbProducts.map((p) => {
-      const hash = p.id
-        .split("")
-        .reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0);
-      const simulatedStock = p.inStock ? (hash % 18) + 1 : 0; // returns 0 to 18
-      return {
-        ...p,
-        stock: simulatedStock,
-      };
-    });
-
-    const lowStockProducts = productsWithStock
+    // Now uses the actual database stock count
+    const lowStockProducts = dbProducts
       .filter((p) => p.stock < 15)
       .sort((a, b) => a.stock - b.stock)
       .slice(0, 5);

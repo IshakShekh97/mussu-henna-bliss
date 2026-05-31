@@ -1,7 +1,32 @@
-import React from "react";
+import React, { Suspense } from "react";
+import { getProducts } from "@/app/actions/product.action";
+import { ProductsList } from "@/components/admin/products/products-list";
+import { ProductsSkeleton } from "@/components/admin/products/products-skeleton";
 
-const ProductsPage = () => {
-  return <div>ProductsPage</div>;
+// Force dynamic fetch to prevent stale inventory cache
+export const dynamic = "force-dynamic";
+
+export const metadata = {
+  title: "Products Inventory | Admin Portal",
+  description:
+    "Manage product catalogs, stock counts, and store listing availability.",
 };
 
-export default ProductsPage;
+export default async function ProductsPage() {
+  return (
+    <Suspense fallback={<ProductsSkeleton />}>
+      <ProductsLoader />
+    </Suspense>
+  );
+}
+
+/**
+ * Asynchronously loads products from database on the server,
+ * then renders the interactive client manager.
+ */
+async function ProductsLoader() {
+  const result = await getProducts();
+  const products = result.success && result.data ? result.data : [];
+
+  return <ProductsList initialProducts={products as any} />;
+}

@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client"
   output   = "../lib/generated/prisma"
@@ -31,6 +30,7 @@ model Product {
   category    String // e.g., "Bridal", "Practice", "Nail"
   imageUrl    String? // URL to the image hosted on Supabase Storage/Cloudinary
   inStock     Boolean @default(true) // Easy toggle for the dashboard
+  stock       Int     @default(0) // Quantity available
 
   orderItems OrderItem[] // Relation to track which orders bought this product
 
