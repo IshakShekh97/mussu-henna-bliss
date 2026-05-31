@@ -12,7 +12,7 @@ export async function sendBookingQuote(
   bookingId: string,
   price: number,
   artistNotes?: string,
-  newTime?: string
+  newTime?: string,
 ) {
   try {
     if (!bookingId) {
@@ -50,10 +50,12 @@ export async function sendBookingQuote(
     });
 
     // Simulate WhatsApp Cloud API request
-    const message = `Hi ${booking.customerName}, Muskan here from Mussu's Henna Bliss! ✨ I have reviewed your request for ${booking.eventType} on ${new Date(booking.eventDate).toLocaleDateString()}. Here is your custom quote: ₹${price}. Review details and track your booking status here: http://localhost:3000/status/booking-${booking.id}`;
-    
+    const message = `Hi ${booking.customerName}, Muskan here from Mussu's Henna Bliss! ✨ I have reviewed your request for ${booking.eventType} on ${new Date(booking.eventDate).toLocaleDateString()}. Here is your custom quote: ₹${price}. Review details and track your booking status here: ${process.env.NEXT_PUBLIC_API_URL}/status/booking-${booking.id}`;
+
     console.log("-----------------------------------------");
-    console.log(`[WhatsApp Cloud API] Live notification fired to: ${booking.phone}`);
+    console.log(
+      `[WhatsApp Cloud API] Live notification fired to: ${booking.phone}`,
+    );
     console.log(`[Message]: "${message}"`);
     console.log("-----------------------------------------");
 
@@ -127,7 +129,10 @@ export async function completeBooking(bookingId: string) {
     return { success: true, booking };
   } catch (error: any) {
     console.error("Failed to complete booking:", error);
-    return { success: false, error: error.message || "Failed to complete booking" };
+    return {
+      success: false,
+      error: error.message || "Failed to complete booking",
+    };
   }
 }
 
@@ -146,7 +151,10 @@ export async function deleteBooking(bookingId: string) {
     return { success: true, booking };
   } catch (error: any) {
     console.error("Failed to delete booking:", error);
-    return { success: false, error: error.message || "Failed to delete booking" };
+    return {
+      success: false,
+      error: error.message || "Failed to delete booking",
+    };
   }
 }
 
@@ -183,25 +191,37 @@ export async function getDashboardMetrics() {
       .reduce((sum, o) => sum + o.totalAmount, 0);
 
     const bookingDepositsSum = bookings
-      .filter((b) => (b.status === "ACCEPTED" || b.status === "COMPLETED") && b.quotedPrice)
+      .filter(
+        (b) =>
+          (b.status === "ACCEPTED" || b.status === "COMPLETED") &&
+          b.quotedPrice,
+      )
       .reduce((sum, b) => sum + (b.quotedPrice || 0) * 0.5, 0);
 
     const grossRevenue = completedOrdersSum + bookingDepositsSum;
 
     // 2. Pending retail orders count
-    const pendingOrdersCount = orders.filter((o) => o.status === "PENDING").length;
+    const pendingOrdersCount = orders.filter(
+      (o) => o.status === "PENDING",
+    ).length;
 
     // 3. Awaiting quotes bookings count
-    const awaitingQuotesCount = bookings.filter((b) => b.status === "PENDING_QUOTE").length;
+    const awaitingQuotesCount = bookings.filter(
+      (b) => b.status === "PENDING_QUOTE",
+    ).length;
 
     // 4. Booking success rate
     const sentQuotesCount = bookings.filter(
-      (b) => b.status === "QUOTED" || b.status === "ACCEPTED" || b.status === "COMPLETED"
+      (b) =>
+        b.status === "QUOTED" ||
+        b.status === "ACCEPTED" ||
+        b.status === "COMPLETED",
     ).length;
     const acceptedQuotesCount = bookings.filter(
-      (b) => b.status === "ACCEPTED" || b.status === "COMPLETED"
+      (b) => b.status === "ACCEPTED" || b.status === "COMPLETED",
     ).length;
-    const successRate = sentQuotesCount > 0 ? (acceptedQuotesCount / sentQuotesCount) * 100 : 0;
+    const successRate =
+      sentQuotesCount > 0 ? (acceptedQuotesCount / sentQuotesCount) * 100 : 0;
 
     return {
       success: true,
@@ -217,7 +237,12 @@ export async function getDashboardMetrics() {
     return {
       success: false,
       error: error.message || "Failed to fetch metrics",
-      data: { grossRevenue: 0, pendingOrdersCount: 0, awaitingQuotesCount: 0, successRate: 0 },
+      data: {
+        grossRevenue: 0,
+        pendingOrdersCount: 0,
+        awaitingQuotesCount: 0,
+        successRate: 0,
+      },
     };
   }
 }
@@ -257,7 +282,9 @@ export async function getInventoryWatch() {
 
     // Map each product to a deterministic stock count based on its ID hash to avoid schema migration
     const productsWithStock = dbProducts.map((p) => {
-      const hash = p.id.split("").reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0);
+      const hash = p.id
+        .split("")
+        .reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0);
       const simulatedStock = p.inStock ? (hash % 18) + 1 : 0; // returns 0 to 18
       return {
         ...p,
@@ -298,6 +325,90 @@ export async function getFulfillmentFeed() {
       success: false,
       error: error.message || "Failed to fetch orders",
       data: [],
+    };
+  }
+}
+
+/**
+ * Manually updates a booking's status to a target BookingStatus.
+ */
+export async function updateBookingStatus(
+  bookingId: string,
+  status: "PENDING_QUOTE" | "QUOTED" | "ACCEPTED" | "COMPLETED" | "CANCELLED",
+) {
+  try {
+    if (!bookingId) {
+      return { success: false, error: "Booking ID is required" };
+    }
+
+    const booking = await prisma.booking.update({
+      where: { id: bookingId },
+      data: { status },
+    });
+
+    revalidatePath("/admin/bookings");
+    revalidatePath("/admin");
+
+    return { success: true, booking };
+  } catch (error: any) {
+    console.error("Failed to update booking status:", error);
+    return {
+      success: false,
+      error: error.message || "Failed to update booking status",
+    };
+  }
+}
+
+/**
+ * Updates a booking's full profile details.
+ */
+export async function updateBooking(
+  bookingId: string,
+  data: {
+    customerName: string;
+    email: string;
+    phone: string;
+    eventType: string;
+    eventDate: string; // ISO string
+    location: string;
+    guestCount?: number | null;
+    designNotes?: string | null;
+    quotedPrice?: number | null;
+    artistNotes?: string | null;
+    status: "PENDING_QUOTE" | "QUOTED" | "ACCEPTED" | "COMPLETED" | "CANCELLED";
+  },
+) {
+  try {
+    if (!bookingId) {
+      return { success: false, error: "Booking ID is required" };
+    }
+
+    const booking = await prisma.booking.update({
+      where: { id: bookingId },
+      data: {
+        customerName: data.customerName,
+        email: data.email,
+        phone: data.phone,
+        eventType: data.eventType,
+        eventDate: new Date(data.eventDate),
+        location: data.location,
+        guestCount: data.guestCount,
+        designNotes: data.designNotes,
+        quotedPrice: data.quotedPrice,
+        artistNotes: data.artistNotes,
+        status: data.status,
+      },
+    });
+
+    revalidatePath("/admin/bookings");
+    revalidatePath("/admin");
+
+    return { success: true, booking };
+  } catch (error: any) {
+    console.error("Failed to update booking:", error);
+    return {
+      success: false,
+      error: error.message || "Failed to update booking",
     };
   }
 }

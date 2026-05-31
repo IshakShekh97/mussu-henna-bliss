@@ -22,14 +22,20 @@ export function BookingsSkeleton() {
             {/* Filter tabs skeleton */}
             <div className="flex gap-1.5 overflow-x-auto pb-1">
               {Array.from({ length: 4 }).map((_, i) => (
-                <Skeleton key={i} className="h-7 w-16 bg-neutral-200 rounded-lg shrink-0" />
+                <Skeleton
+                  key={i}
+                  className="h-7 w-16 bg-neutral-200 rounded-lg shrink-0"
+                />
               ))}
             </div>
-            
+
             {/* Pipeline cards skeletons */}
             <div className="flex flex-col gap-3 mt-2">
               {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="p-4 border border-[#EBE4DC] rounded-xl flex flex-col gap-2.5">
+                <div
+                  key={i}
+                  className="p-4 border border-[#EBE4DC] rounded-xl flex flex-col gap-2.5"
+                >
                   <div className="flex justify-between items-center">
                     <Skeleton className="h-5.5 w-28 bg-neutral-200" />
                     <Skeleton className="h-4 w-12 bg-neutral-200 rounded-full" />

@@ -74,13 +74,64 @@ export const manualBookingSchema = z.object({
     .max(1000, "Design notes cannot exceed 1000 characters.")
     .optional(),
   status: z.enum(["PENDING_QUOTE", "ACCEPTED"]),
-  quotedPrice: z.number().min(0, "Quoted price must be a non-negative number.").optional(),
+  quotedPrice: z
+    .number()
+    .min(0, "Quoted price must be a non-negative number.")
+    .optional(),
   artistNotes: z
     .string()
     .max(1000, "Artist notes cannot exceed 1000 characters.")
     .optional(),
 });
 
+export interface Booking {
+  id: string;
+  customerName: string;
+  email: string;
+  phone: string;
+  eventType: string;
+  eventDate: Date | string;
+  location: string;
+  guestCount?: number | null;
+  designNotes?: string | null;
+  quotedPrice?: number | null;
+  artistNotes?: string | null;
+  status: string; // PENDING_QUOTE, QUOTED, ACCEPTED, COMPLETED, CANCELLED
+  createdAt: Date | string;
+}
+
+export const editBookingSchema = z.object({
+  customerName: z
+    .string()
+    .min(2, "Customer name must be at least 2 characters."),
+  email: z.string().email("Please enter a valid email address."),
+  phone: z.string().min(10, "Phone number must be at least 10 digits."),
+  eventType: z.string().min(1, "Please select an event occasion."),
+  date: z.date({ error: "Please select an event date" }),
+  time: z.string().min(1, "Please select an event start time."),
+  location: z.string().min(5, "Venue location must be at least 5 characters."),
+  guestCount: z
+    .number()
+    .min(1, "Guest count must be at least 1.")
+    .optional()
+    .nullable(),
+  designNotes: z.string().max(1000).optional().nullable(),
+  status: z.enum([
+    "PENDING_QUOTE",
+    "QUOTED",
+    "ACCEPTED",
+    "COMPLETED",
+    "CANCELLED",
+  ]),
+  quotedPrice: z
+    .number()
+    .min(0, "Quoted price must be a non-negative number.")
+    .optional()
+    .nullable(),
+  artistNotes: z.string().max(1000).optional().nullable(),
+});
+
+export type editBookingSchemaType = z.infer<typeof editBookingSchema>;
 export type LoginFormSchemaType = z.infer<typeof loginSchema>;
 export type bookingFormSchemaType = z.infer<typeof bookingSchema>;
 export type checkoutFormSchemaType = z.infer<typeof checkoutSchema>;

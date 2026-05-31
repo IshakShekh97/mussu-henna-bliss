@@ -1,9 +1,15 @@
 import React from "react";
 import { Calendar, Clock, MapPin, CheckCircle2 } from "lucide-react";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { BookingQuoteDialog } from "@/components/admin/booking-quote-dialog";
+import { BookingQuoteDialog } from "@/components/admin/bookings/booking-quote-dialog";
 import { getBookingPipeline } from "@/app/actions/admin.action";
 
 export async function BookingPipeline() {
@@ -14,10 +20,14 @@ export async function BookingPipeline() {
     <Card className="lg:col-span-2 bg-[#FDFBF7] border-[#EBE4DC] shadow-xs flex flex-col">
       <CardHeader className="border-b border-[#EBE4DC]/60 pb-4">
         <CardTitle className="font-serif text-xl font-bold text-[#4E3E2F] flex items-center gap-1.5">
-          Recent Booking Requests <span className="text-[#8C7A6B] text-xs font-sans font-normal">(Needs Attention)</span>
+          Recent Booking Requests{" "}
+          <span className="text-[#8C7A6B] text-xs font-sans font-normal">
+            (Needs Attention)
+          </span>
         </CardTitle>
         <CardDescription className="text-xs">
-          Review custom requests, send quotes directly to client WhatsApp, or track response states.
+          Review custom requests, send quotes directly to client WhatsApp, or
+          track response states.
         </CardDescription>
       </CardHeader>
       <CardContent className="p-0 flex-1">
@@ -25,7 +35,9 @@ export async function BookingPipeline() {
           <div className="flex flex-col items-center justify-center p-12 text-center text-[#8C7A6B]">
             <CheckCircle2 className="h-8 w-8 text-[#8C7A6B]/50 mb-2" />
             <span className="font-semibold text-sm">All caught up!</span>
-            <span className="text-xs text-muted-foreground mt-0.5">No bookings awaiting quote reviews.</span>
+            <span className="text-xs text-muted-foreground mt-0.5">
+              No bookings awaiting quote reviews.
+            </span>
           </div>
         ) : (
           <div className="divide-y divide-[#EBE4DC]/50">
@@ -58,22 +70,30 @@ export async function BookingPipeline() {
                     <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-2xs text-[#5C4D3E]">
                       <span className="flex items-center gap-1">
                         <Calendar className="h-3.5 w-3.5 text-[#8C7A6B] shrink-0" />
-                        {new Date(booking.eventDate).toLocaleDateString("en-IN", {
-                          day: "numeric",
-                          month: "short",
-                          year: "numeric",
-                        })}
+                        {new Date(booking.eventDate).toLocaleDateString(
+                          "en-IN",
+                          {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          },
+                        )}
                       </span>
                       <span className="flex items-center gap-1">
                         <Clock className="h-3.5 w-3.5 text-[#8C7A6B] shrink-0" />
-                        {new Date(booking.eventDate).toLocaleTimeString("en-IN", {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
+                        {new Date(booking.eventDate).toLocaleTimeString(
+                          "en-IN",
+                          {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          },
+                        )}
                       </span>
                       <span className="flex items-center gap-1">
                         <MapPin className="h-3.5 w-3.5 text-[#8C7A6B] shrink-0" />
-                        <span className="max-w-[150px] truncate">{booking.location}</span>
+                        <span className="max-w-[150px] truncate">
+                          {booking.location}
+                        </span>
                       </span>
                     </div>
                   </div>

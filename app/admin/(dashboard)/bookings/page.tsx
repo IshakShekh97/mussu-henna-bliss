@@ -1,7 +1,7 @@
 import React, { Suspense } from "react";
 import { getBookings } from "@/app/actions/admin.action";
-import { BookingsManager } from "@/components/admin/bookings-manager";
-import { BookingsSkeleton } from "@/components/admin/bookings-skeleton";
+import { BookingsManager } from "@/components/admin/bookings/bookings-manager";
+import { BookingsSkeleton } from "@/components/admin/bookings/bookings-skeleton";
 
 // Force Next.js to dynamically fetch data on every request
 export const dynamic = "force-dynamic";
@@ -15,7 +15,8 @@ export default async function BookingsPage() {
           Client Booking Pipeline
         </h1>
         <p className="text-sm text-muted-foreground mt-0.5">
-          Review details, propose quotes, schedule event times, and track client reply statuses.
+          Review details, propose quotes, schedule event times, and track client
+          reply statuses.
         </p>
       </div>
 
