@@ -10,7 +10,7 @@ import { Loader2, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCartStore } from "@/lib/cartStore";
 import { checkoutSchema, checkoutFormSchemaType } from "@/lib/zodSchemas";
-import { checkoutCart } from "@/app/actions/checkout";
+import { checkoutCart } from "@/app/actions/checkout.action";
 import { cn } from "@/lib/utils";
 
 // Reusable Floating Label Input using Geist Font
@@ -30,8 +30,9 @@ const FloatingInput = React.forwardRef<HTMLInputElement, FloatingInputProps>(
           placeholder=" "
           className={cn(
             "peer block w-full rounded-xl border border-[#EBE4DC] bg-white px-3.5 pt-5 pb-1.5 text-sm text-gray-800 transition-all outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500 placeholder:text-transparent",
-            error && "border-destructive focus:border-destructive focus:ring-destructive",
-            className
+            error &&
+              "border-destructive focus:border-destructive focus:ring-destructive",
+            className,
           )}
           {...props}
         />
@@ -41,17 +42,19 @@ const FloatingInput = React.forwardRef<HTMLInputElement, FloatingInputProps>(
             "absolute left-3.5 top-1.5 z-10 origin-[0] -translate-y-1.5 scale-75 transform text-xs text-muted-foreground duration-150 pointer-events-none",
             "peer-placeholder-shown:translate-y-3.5 peer-placeholder-shown:scale-100 peer-placeholder-shown:text-sm",
             "peer-focus:-translate-y-1.5 peer-focus:scale-75 peer-focus:text-pink-500",
-            error && "peer-focus:text-destructive text-destructive/80"
+            error && "peer-focus:text-destructive text-destructive/80",
           )}
         >
           {label}
         </label>
         {error && (
-          <p className="text-[11px] text-destructive mt-1 font-sans font-medium pl-1">{error}</p>
+          <p className="text-[11px] text-destructive mt-1 font-sans font-medium pl-1">
+            {error}
+          </p>
         )}
       </div>
     );
-  }
+  },
 );
 FloatingInput.displayName = "FloatingInput";
 
@@ -128,7 +131,8 @@ export default function CheckoutForm() {
         const messageText = `Hi Muskan! I just placed an order. My Order ID is ${orderId}. My total is ₹${total}. Here is my tracking link: ${trackingLink}`;
         const encodedMessage = encodeURIComponent(messageText);
 
-        const ownerWhatsAppNumber = process.env.NEXT_PUBLIC_OWNER_WHATSAPP_NUMBER || "916290665156";
+        const ownerWhatsAppNumber =
+          process.env.NEXT_PUBLIC_OWNER_WHATSAPP_NUMBER || "916290665156";
         const whatsappUrl = `https://wa.me/${ownerWhatsAppNumber}?text=${encodedMessage}`;
 
         // 3. Open WhatsApp link and redirect status page in local client
@@ -235,7 +239,8 @@ export default function CheckoutForm() {
               )}
             </Button>
             <p className="text-center text-xs text-muted-foreground mt-3 font-sans font-light leading-relaxed">
-              Upon clicking, your order is saved, and WhatsApp will open to finalise payment and courier dispatch with Muskan.
+              Upon clicking, your order is saved, and WhatsApp will open to
+              finalise payment and courier dispatch with Muskan.
             </p>
           </div>
         </form>
