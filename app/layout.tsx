@@ -10,9 +10,10 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import SmoothScroll from "@/components/SmoothScroll";
 import { Toaster } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const morlana = localFont({
-  src: "../public/fonts/Moralana.woff", // Adjust the number of '../' based on your folder depth
+  src: "../public/fonts/Moralana.woff",
   display: "swap",
   variable: "--font-morlana",
 });
@@ -69,7 +70,9 @@ export default function RootLayout({
       )}
     >
       <body className="min-h-full flex flex-col">
-        <SmoothScroll>{children}</SmoothScroll>
+        <SmoothScroll>
+          <TooltipProvider>{children}</TooltipProvider>
+        </SmoothScroll>
         <Toaster position="bottom-center" richColors />
       </body>
     </html>

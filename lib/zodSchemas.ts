@@ -53,6 +53,35 @@ export const loginSchema = z.object({
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
+export const manualBookingSchema = z.object({
+  customerName: z
+    .string()
+    .min(2, "Customer name must be at least 2 characters."),
+  email: z.string().email("Please enter a valid email address."),
+  phone: z
+    .string()
+    .min(10, "Phone number must be at least 10 digits.")
+    .regex(/^\+?[0-9\s-]{10,15}$/, "Please enter a valid phone number."),
+  eventType: z.string().min(1, "Please select an event occasion."),
+  date: z.date({
+    error: "Please select an event date",
+  }),
+  time: z.string().min(1, "Please select an event start time."),
+  location: z.string().min(5, "Venue location must be at least 5 characters."),
+  guestCount: z.number().min(1, "Guest count must be at least 1.").optional(),
+  designNotes: z
+    .string()
+    .max(1000, "Design notes cannot exceed 1000 characters.")
+    .optional(),
+  status: z.enum(["PENDING_QUOTE", "ACCEPTED"]),
+  quotedPrice: z.number().min(0, "Quoted price must be a non-negative number.").optional(),
+  artistNotes: z
+    .string()
+    .max(1000, "Artist notes cannot exceed 1000 characters.")
+    .optional(),
+});
+
 export type LoginFormSchemaType = z.infer<typeof loginSchema>;
 export type bookingFormSchemaType = z.infer<typeof bookingSchema>;
 export type checkoutFormSchemaType = z.infer<typeof checkoutSchema>;
+export type manualBookingSchemaType = z.infer<typeof manualBookingSchema>;
