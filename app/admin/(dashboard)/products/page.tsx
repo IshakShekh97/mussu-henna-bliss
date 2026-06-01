@@ -20,10 +20,6 @@ export default async function ProductsPage() {
   );
 }
 
-/**
- * Asynchronously loads products from database on the server,
- * then renders the interactive client manager.
- */
 async function ProductsLoader() {
   const result = await getProducts();
   const products = result.success && result.data ? result.data : [];

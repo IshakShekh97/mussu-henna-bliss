@@ -50,7 +50,7 @@ import {
   completeBooking,
   sendBookingQuote,
   updateBookingStatus,
-} from "@/app/actions/admin.action";
+} from "@/app/actions/booking.action";
 import { Booking } from "@/lib/zodSchemas";
 
 interface ViewBookingDialogProps {

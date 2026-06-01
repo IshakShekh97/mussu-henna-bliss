@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import { Search, Plus, Edit2, Trash2, Eye, EyeOff, Package, AlertCircle, ImageIcon } from "lucide-react";
+import { Search, Plus, Edit2, Trash2, Eye, EyeOff, Package, AlertCircle, ImageIcon, AlertTriangle, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ProductForm } from "./product-form";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toggleProductStock, deleteProduct } from "@/app/actions/product.action";
 
 // Predefined list of products matched from server actions
@@ -34,14 +35,15 @@ interface ProductsListProps {
 const CATEGORIES = ["All", "Bridal", "Practice", "Nail/Care", "Stain Oil"];
 
 export function ProductsList({ initialProducts }: ProductsListProps) {
+  const router = useRouter();
   const [products, setProducts] = useState<Product[]>(initialProducts);
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("All");
   const [sortOption, setSortOption] = useState("stock-asc"); // Default sorting low stock first
 
-  // Drawer / Form state
-  const [formOpen, setFormOpen] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  // Delete Confirmation State
+  const [productToDelete, setProductToDelete] = useState<{ id: string; name: string } | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Optimistic UI toggle for product inStock status
   const handleToggleStock = async (productId: string, currentInStock: boolean) => {
@@ -72,43 +74,34 @@ export function ProductsList({ initialProducts }: ProductsListProps) {
     }
   };
 
-  // Delete product action
-  const handleDeleteProduct = async (productId: string, name: string) => {
-    if (!window.confirm(`Are you sure you want to delete "${name}"? This action cannot be undone.`)) {
-      return;
-    }
+  // Open delete dialog handler
+  const handleDeleteProduct = (productId: string, name: string) => {
+    setProductToDelete({ id: productId, name });
+  };
+
+  // Perform actual product deletion from the dialog
+  const confirmDeleteProduct = async () => {
+    if (!productToDelete) return;
+    setIsDeleting(true);
 
     try {
-      const res = await deleteProduct(productId);
+      const res = await deleteProduct(productToDelete.id);
       if (res.success) {
         toast.success("Product deleted successfully");
-        setProducts((prev) => prev.filter((p) => p.id !== productId));
+        setProducts((prev) => prev.filter((p) => p.id !== productToDelete.id));
+        setProductToDelete(null);
       } else {
         toast.error(res.error || "Failed to delete product");
       }
     } catch (error) {
       console.error(error);
       toast.error("Failed to delete product");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
-  // Callback when product is added or edited successfully
-  const handleFormSuccess = (savedProduct: any, isEdit: boolean) => {
-    // Format saved product dates
-    const formatted: Product = {
-      ...savedProduct,
-      createdAt: new Date(savedProduct.createdAt),
-      updatedAt: new Date(savedProduct.updatedAt),
-    };
 
-    if (isEdit) {
-      setProducts((prev) =>
-        prev.map((p) => (p.id === formatted.id ? formatted : p))
-      );
-    } else {
-      setProducts((prev) => [formatted, ...prev]);
-    }
-  };
 
   // Client side filtering & sorting
   const filteredProducts = products
@@ -152,10 +145,7 @@ export function ProductsList({ initialProducts }: ProductsListProps) {
           </p>
         </div>
         <Button
-          onClick={() => {
-            setEditingProduct(null);
-            setFormOpen(true);
-          }}
+          onClick={() => router.push("/admin/products/create")}
           className="bg-primary text-primary-foreground hover:bg-primary/90 flex items-center gap-1.5 self-start sm:self-auto rounded-lg shadow-xs"
         >
           <Plus className="h-4 w-4 shrink-0" />
@@ -327,10 +317,7 @@ export function ProductsList({ initialProducts }: ProductsListProps) {
                     <Button
                       variant="outline"
                       size="xs"
-                      onClick={() => {
-                        setEditingProduct(product);
-                        setFormOpen(true);
-                      }}
+                      onClick={() => router.push(`/admin/products/${product.id}/edit`)}
                       className="border-[#EBE4DC] text-[#4E3E2F] hover:bg-[#FAF6F0] rounded-md flex items-center gap-1 px-2.5 h-7 text-[11px]"
                     >
                       <Edit2 className="h-3 w-3 shrink-0" />
@@ -364,13 +351,48 @@ export function ProductsList({ initialProducts }: ProductsListProps) {
         </div>
       )}
 
-      {/* Slide-out Product Config Form */}
-      <ProductForm
-        open={formOpen}
-        onOpenChange={setFormOpen}
-        product={editingProduct}
-        onSuccess={handleFormSuccess}
-      />
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={productToDelete !== null} onOpenChange={(open) => { if (!open) setProductToDelete(null); }}>
+        <DialogContent className="max-w-md border border-[#EBE4DC] rounded-2xl p-6 shadow-lg text-center gap-5 bg-[#FDFBF7]">
+          <DialogHeader className="items-center">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-rose-50 text-rose-600 border border-rose-200 mb-2">
+              <AlertTriangle className="h-6 w-6 text-rose-600" />
+            </div>
+            <DialogTitle className="font-serif text-xl font-bold text-[#4E3E2F]">
+              Delete Product?
+            </DialogTitle>
+            <DialogDescription className="text-xs mt-1 leading-relaxed text-[#8C7A6B]">
+              Are you sure you want to permanently delete <span className="font-semibold text-[#4E3E2F]">"{productToDelete?.name}"</span>?
+              This action is permanent and cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="flex gap-3 mt-4 w-full">
+            <Button
+              variant="outline"
+              disabled={isDeleting}
+              onClick={() => setProductToDelete(null)}
+              className="border-[#EBE4DC] text-[#8C7A6B] hover:bg-[#FAF6F0] flex-1 py-5 rounded-xl cursor-pointer disabled:opacity-50"
+            >
+              Cancel
+            </Button>
+            <Button
+              disabled={isDeleting}
+              onClick={confirmDeleteProduct}
+              className="bg-rose-600 hover:bg-rose-700 text-white font-semibold flex-1 py-5 rounded-xl cursor-pointer flex items-center justify-center gap-1.5"
+            >
+              {isDeleting ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <>
+                  <Trash2 className="h-4 w-4" />
+                  Delete Product
+                </>
+              )}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

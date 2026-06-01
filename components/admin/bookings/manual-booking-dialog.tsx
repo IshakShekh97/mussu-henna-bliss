@@ -24,7 +24,7 @@ import {
   manualBookingSchema,
   type manualBookingSchemaType,
 } from "@/lib/zodSchemas";
-import { createBooking } from "@/app/actions/admin.action";
+import { createBooking } from "@/app/actions/booking.action";
 import Loader2 from "./loader";
 
 interface ManualBookingDialogProps {

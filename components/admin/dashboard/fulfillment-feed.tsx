@@ -1,7 +1,13 @@
 import React from "react";
 import { ShoppingBag } from "lucide-react";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -11,7 +17,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { getFulfillmentFeed } from "@/app/actions/admin.action";
+import { getFulfillmentFeed } from "@/app/actions/dashboard.action";
 
 export async function FulfillmentFeed() {
   const result = await getFulfillmentFeed();
@@ -24,7 +30,8 @@ export async function FulfillmentFeed() {
           Live Order Fulfillment Feed
         </CardTitle>
         <CardDescription className="text-xs">
-          Review and manage recent retail purchases for henna cones and related products.
+          Review and manage recent retail purchases for henna cones and related
+          products.
         </CardDescription>
       </CardHeader>
       <CardContent className="p-0">
@@ -32,36 +39,52 @@ export async function FulfillmentFeed() {
           <div className="flex flex-col items-center justify-center p-12 text-center text-[#8C7A6B]">
             <ShoppingBag className="h-8 w-8 text-[#8C7A6B]/50 mb-2" />
             <span className="font-semibold text-sm">No orders yet</span>
-            <span className="text-xs text-muted-foreground mt-0.5">Sales will appear here as customers place checkouts.</span>
+            <span className="text-xs text-muted-foreground mt-0.5">
+              Sales will appear here as customers place checkouts.
+            </span>
           </div>
         ) : (
           <div className="overflow-x-auto w-full">
             <Table>
               <TableHeader className="bg-[#FAF6F0]">
                 <TableRow className="border-[#EBE4DC]">
-                  <TableHead className="w-[120px] text-xs font-bold text-[#4E3E2F]">Order ID</TableHead>
-                  <TableHead className="text-xs font-bold text-[#4E3E2F]">Customer</TableHead>
-                  <TableHead className="text-xs font-bold text-[#4E3E2F]">Date</TableHead>
-                  <TableHead className="text-xs font-bold text-[#4E3E2F]">Total Amount</TableHead>
-                  <TableHead className="text-xs font-bold text-[#4E3E2F]">Status</TableHead>
+                  <TableHead className="w-[120px] text-xs font-bold text-[#4E3E2F]">
+                    Order ID
+                  </TableHead>
+                  <TableHead className="text-xs font-bold text-[#4E3E2F]">
+                    Customer
+                  </TableHead>
+                  <TableHead className="text-xs font-bold text-[#4E3E2F]">
+                    Date
+                  </TableHead>
+                  <TableHead className="text-xs font-bold text-[#4E3E2F]">
+                    Total Amount
+                  </TableHead>
+                  <TableHead className="text-xs font-bold text-[#4E3E2F]">
+                    Status
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {recentOrders.map((order) => {
-                  const orderDate = new Date(order.createdAt).toLocaleDateString("en-IN", {
+                  const orderDate = new Date(
+                    order.createdAt,
+                  ).toLocaleDateString("en-IN", {
                     day: "numeric",
                     month: "short",
                     year: "numeric",
                   });
 
                   // Define badge colors for each order status state
-                  let statusClass = "bg-neutral-50 text-neutral-700 border-neutral-200";
+                  let statusClass =
+                    "bg-neutral-50 text-neutral-700 border-neutral-200";
                   if (order.status === "PENDING") {
                     statusClass = "bg-amber-50 text-amber-700 border-amber-200";
                   } else if (order.status === "PAID") {
                     statusClass = "bg-green-50 text-green-700 border-green-200";
                   } else if (order.status === "FULFILLED") {
-                    statusClass = "bg-emerald-50 text-emerald-800 border-emerald-200";
+                    statusClass =
+                      "bg-emerald-50 text-emerald-800 border-emerald-200";
                   } else if (order.status === "CANCELLED") {
                     statusClass = "bg-rose-50 text-rose-700 border-rose-200";
                   }
@@ -76,7 +99,9 @@ export async function FulfillmentFeed() {
                       </TableCell>
                       <TableCell className="text-xs font-medium text-[#4E3E2F]">
                         <div>{order.customerName}</div>
-                        <div className="text-[10px] text-muted-foreground">{order.phone}</div>
+                        <div className="text-[10px] text-muted-foreground">
+                          {order.phone}
+                        </div>
                       </TableCell>
                       <TableCell className="text-xs text-[#5C4D3E]">
                         {orderDate}
@@ -85,7 +110,9 @@ export async function FulfillmentFeed() {
                         ₹{order.totalAmount.toLocaleString("en-IN")}
                       </TableCell>
                       <TableCell>
-                        <Badge className={`${statusClass} text-3xs font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-md`}>
+                        <Badge
+                          className={`${statusClass} text-3xs font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-md`}
+                        >
                           {order.status}
                         </Badge>
                       </TableCell>

@@ -12,7 +12,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { deleteBooking } from "@/app/actions/admin.action";
+import { deleteBooking } from "@/app/actions/booking.action";
 import Loader2 from "./loader";
 
 interface DeleteBookingDialogProps {

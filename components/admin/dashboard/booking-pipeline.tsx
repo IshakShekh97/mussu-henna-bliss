@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { BookingQuoteDialog } from "@/components/admin/bookings/booking-quote-dialog";
-import { getBookingPipeline } from "@/app/actions/admin.action";
+import { getBookingPipeline } from "@/app/actions/dashboard.action";
 
 export async function BookingPipeline() {
   const result = await getBookingPipeline();

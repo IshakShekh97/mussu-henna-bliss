@@ -1,9 +1,15 @@
 import React from "react";
 import { Package, AlertTriangle } from "lucide-react";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { getInventoryWatch } from "@/app/actions/admin.action";
+import { getInventoryWatch } from "@/app/actions/dashboard.action";
 
 export async function InventoryWatch() {
   const result = await getInventoryWatch();
@@ -24,7 +30,9 @@ export async function InventoryWatch() {
           <div className="flex flex-col items-center justify-center p-12 text-center text-[#8C7A6B]">
             <Package className="h-8 w-8 text-[#8C7A6B]/50 mb-2" />
             <span className="font-semibold text-xs">Stock is healthy</span>
-            <span className="text-[10px] text-muted-foreground mt-0.5">No products under 15 remaining items.</span>
+            <span className="text-[10px] text-muted-foreground mt-0.5">
+              No products under 15 remaining items.
+            </span>
           </div>
         ) : (
           <div className="divide-y divide-[#EBE4DC]/50">

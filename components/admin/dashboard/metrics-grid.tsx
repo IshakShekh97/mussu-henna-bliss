@@ -3,15 +3,20 @@ import { IndianRupee, ShoppingBag, Clock, TrendingUp } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { getDashboardMetrics } from "@/app/actions/admin.action";
+import { getDashboardMetrics } from "@/app/actions/dashboard.action";
 
 export async function MetricsGrid() {
   const result = await getDashboardMetrics();
-  
-  const { grossRevenue, pendingOrdersCount, awaitingQuotesCount, successRate } = 
+
+  const { grossRevenue, pendingOrdersCount, awaitingQuotesCount, successRate } =
     result.success && result.data
       ? result.data
-      : { grossRevenue: 0, pendingOrdersCount: 0, awaitingQuotesCount: 0, successRate: 0 };
+      : {
+          grossRevenue: 0,
+          pendingOrdersCount: 0,
+          awaitingQuotesCount: 0,
+          successRate: 0,
+        };
 
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -33,7 +38,9 @@ export async function MetricsGrid() {
             <span className="inline-flex items-center rounded-full bg-emerald-50 px-2 py-0.5 text-2xs font-semibold text-emerald-700 border border-emerald-200">
               +12.4%
             </span>
-            <span className="text-3xs text-muted-foreground">vs last month</span>
+            <span className="text-3xs text-muted-foreground">
+              vs last month
+            </span>
           </div>
         </CardContent>
       </Card>
@@ -95,7 +102,10 @@ export async function MetricsGrid() {
             {successRate.toFixed(0)}%
           </div>
           <div className="space-y-1.5">
-            <Progress value={successRate || 10} className="h-1.5 bg-neutral-200" />
+            <Progress
+              value={successRate || 10}
+              className="h-1.5 bg-neutral-200"
+            />
             <div className="flex justify-between text-4xs text-muted-foreground uppercase font-bold tracking-wider">
               <span>Success Rate</span>
               <span>Goal: 75%</span>

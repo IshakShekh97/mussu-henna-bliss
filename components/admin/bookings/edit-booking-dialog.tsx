@@ -21,7 +21,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Field, FieldLabel, FieldError } from "@/components/ui/field";
 import { DateTimePicker } from "@/components/book/DateTimePicker";
 
-import { updateBooking } from "@/app/actions/admin.action";
+import { updateBooking } from "@/app/actions/booking.action";
 import Loader2 from "./loader";
 import {
   Booking,

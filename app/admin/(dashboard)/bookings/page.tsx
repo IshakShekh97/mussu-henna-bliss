@@ -1,10 +1,16 @@
 import React, { Suspense } from "react";
-import { getBookings } from "@/app/actions/admin.action";
+import { getBookings } from "@/app/actions/booking.action";
 import { BookingsManager } from "@/components/admin/bookings/bookings-manager";
 import { BookingsSkeleton } from "@/components/admin/bookings/bookings-skeleton";
 
 // Force Next.js to dynamically fetch data on every request
 export const dynamic = "force-dynamic";
+
+export const metadata = {
+  title: "Bookings | Admin Portal",
+  description:
+    "Manage bookings, track quotes, schedule event times, and track client reply statuses.",
+};
 
 export default async function BookingsPage() {
   return (

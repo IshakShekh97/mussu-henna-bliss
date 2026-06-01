@@ -12,13 +12,11 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { updateBookingStatus } from "@/app/actions/admin.action";
+import { updateBookingStatus } from "@/app/actions/booking.action";
 
 import { PipelineView } from "./pipeline-view";
 import { CalendarView } from "./calendar-view";
 import { ViewBookingDialog } from "./view-booking-dialog";
-import { ManualBookingDialog } from "./manual-booking-dialog";
-import { EditBookingDialog } from "./edit-booking-dialog";
 import { DeleteBookingDialog } from "./delete-booking-dialog";
 import { HandoffDialog } from "./handoff-dialog";
 import { Booking } from "@/lib/zodSchemas";
@@ -40,14 +38,12 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
   const [filterTab, setFilterTab] = useState<string>("all"); // all | requested | quoted | accepted | completed | cancelled
 
   // Dialog / Modal states
-  const [manualLogOpen, setManualLogOpen] = useState(false);
   const [handoffOpen, setHandoffOpen] = useState(false);
   const [generatedLink, setGeneratedLink] = useState("");
   const [generatedBookingId, setGeneratedBookingId] = useState("");
 
   // View, Edit, Delete Dialog States
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
-  const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [bookingToDeleteId, setBookingToDeleteId] = useState<string | null>(
     null,
@@ -121,8 +117,7 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
   };
 
   const handleOpenEdit = (booking: Booking) => {
-    setSelectedBookingId(booking.id);
-    setEditDialogOpen(true);
+    router.push(`/admin/bookings/${booking.id}/edit`);
   };
 
   const handleOpenDelete = (bookingId: string) => {
@@ -231,7 +226,7 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
         {/* Log Manual Button */}
         <Button
           onClick={() => {
-            setManualLogOpen(true);
+            router.push("/admin/bookings/create");
           }}
           className="bg-primary hover:bg-primary/95 text-white font-semibold rounded-xl text-xs px-4 py-5 shadow-md shadow-primary/10 select-none active:scale-[0.98] transition-transform flex items-center gap-1.5 cursor-pointer w-full md:w-auto justify-center shrink-0"
         >
@@ -273,24 +268,7 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
         onQuoteSuccess={handleQuoteSuccess}
       />
 
-      {/* Manual Booking Log Dialog */}
-      <ManualBookingDialog
-        open={manualLogOpen}
-        onOpenChange={setManualLogOpen}
-        onSuccess={(bookingId) => {
-          setSelectedBookingId(bookingId);
-        }}
-      />
 
-      {/* Edit Booking Dialog */}
-      <EditBookingDialog
-        open={editDialogOpen}
-        onOpenChange={setEditDialogOpen}
-        booking={selectedBooking}
-        onSuccess={() => {
-          // No-op or specific state resets
-        }}
-      />
 
       {/* Delete Confirmation Dialog */}
       <DeleteBookingDialog

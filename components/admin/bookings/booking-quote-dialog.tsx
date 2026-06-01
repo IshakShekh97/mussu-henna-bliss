@@ -28,7 +28,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { sendBookingQuote } from "@/app/actions/admin.action";
+import { sendBookingQuote } from "@/app/actions/booking.action";
 
 interface BookingQuoteDialogProps {
   booking: {
@@ -64,9 +64,12 @@ export function BookingQuoteDialog({ booking }: BookingQuoteDialogProps) {
     startTransition(async () => {
       const result = await sendBookingQuote(booking.id, priceNum, artistNotes);
       if (result.success) {
-        toast.success(`Quote of ₹${priceNum} sent to ${booking.customerName}!`, {
-          description: "A WhatsApp notification has been simulated in logs.",
-        });
+        toast.success(
+          `Quote of ₹${priceNum} sent to ${booking.customerName}!`,
+          {
+            description: "A WhatsApp notification has been simulated in logs.",
+          },
+        );
         setOpen(false);
         setPrice("");
         setArtistNotes("");
@@ -102,10 +105,12 @@ export function BookingQuoteDialog({ booking }: BookingQuoteDialogProps) {
       <DialogContent className="max-w-md sm:max-w-lg bg-[#FDFBF7] border border-[#EBE4DC] rounded-2xl overflow-hidden p-6 gap-5 shadow-lg">
         <DialogHeader className="gap-1.5">
           <DialogTitle className="font-serif text-2xl font-bold text-[#4E3E2F] flex items-center gap-2">
-            <span className="text-primary font-bold">✨</span> Create Package Quote
+            <span className="text-primary font-bold">✨</span> Create Package
+            Quote
           </DialogTitle>
           <p className="text-xs text-muted-foreground">
-            Review event details and send a WhatsApp tracking quote to the client.
+            Review event details and send a WhatsApp tracking quote to the
+            client.
           </p>
         </DialogHeader>
 
@@ -154,7 +159,10 @@ export function BookingQuoteDialog({ booking }: BookingQuoteDialogProps) {
         {/* Input fields */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1.5">
-            <Label htmlFor="dialog-price" className="text-sm font-semibold text-[#4E3E2F]">
+            <Label
+              htmlFor="dialog-price"
+              className="text-sm font-semibold text-[#4E3E2F]"
+            >
               Quoted Package Price (₹)
             </Label>
             <div className="relative">
@@ -175,7 +183,10 @@ export function BookingQuoteDialog({ booking }: BookingQuoteDialogProps) {
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="dialog-notes" className="text-sm font-semibold text-[#4E3E2F]">
+            <Label
+              htmlFor="dialog-notes"
+              className="text-sm font-semibold text-[#4E3E2F]"
+            >
               Artist Notes (Optional)
             </Label>
             <Textarea
@@ -190,7 +201,11 @@ export function BookingQuoteDialog({ booking }: BookingQuoteDialogProps) {
 
           <DialogFooter className="mt-6 flex gap-2">
             <DialogClose asChild>
-              <Button type="button" variant="outline" className="border-[#EBE4DC] text-[#8C7A6B] hover:bg-neutral-100 hover:text-foreground">
+              <Button
+                type="button"
+                variant="outline"
+                className="border-[#EBE4DC] text-[#8C7A6B] hover:bg-neutral-100 hover:text-foreground"
+              >
                 Cancel
               </Button>
             </DialogClose>

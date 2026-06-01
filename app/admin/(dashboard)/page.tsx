@@ -9,6 +9,13 @@ import { InventoryWatch } from "@/components/admin/dashboard/inventory-watch";
 import { InventoryWatchSkeleton } from "@/components/admin/dashboard/inventory-watch-skeleton";
 import { FulfillmentFeed } from "@/components/admin/dashboard/fulfillment-feed";
 import { FulfillmentFeedSkeleton } from "@/components/admin/dashboard/fulfillment-feed-skeleton";
+export const dynamic = "force-dynamic";
+
+export const metadata = {
+  title: "Dashboard | Admin Portal",
+  description:
+    "Welcome to the Dashboard! Manage your business and serve your clients better.",
+};
 
 export default async function DashboardPage() {
   // Format current date matching the landing page theme context
@@ -49,7 +56,7 @@ export default async function DashboardPage() {
         <Suspense fallback={<BookingPipelineSkeleton />}>
           <BookingPipeline />
         </Suspense>
-        
+
         <Suspense fallback={<InventoryWatchSkeleton />}>
           <InventoryWatch />
         </Suspense>

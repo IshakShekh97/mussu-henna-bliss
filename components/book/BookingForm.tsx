@@ -20,6 +20,7 @@ import { cn } from "@/lib/utils";
 import TulipSeprator from "../common/TulipSeprator";
 import { useState } from "react";
 import { bookingFormSchemaType, bookingSchema } from "@/lib/zodSchemas";
+import { createCustomerBooking } from "@/app/actions/booking.action";
 
 export function BookingForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -64,29 +65,36 @@ export function BookingForm() {
 
   async function onSubmit(data: bookingFormSchemaType) {
     setIsSubmitting(true);
-    // Simulate API request
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setIsSubmitting(false);
+    try {
+      const res = await createCustomerBooking(data);
+      if (res.success) {
+        toast.success("Booking request submitted!", {
+          description: `Thank you ${data.fullName}! Muskan will review your request and reach out on WhatsApp (${data.whatsapp}) with a custom quote.`,
+          position: "bottom-right",
+          duration: 6000,
+        });
 
-    console.log(data);
-    toast.success("Booking request submitted!", {
-      description: `Thank you ${data.fullName}! Muskan will review your request and reach out on WhatsApp (${data.whatsapp}) with a custom quote.`,
-      position: "bottom-right",
-      duration: 6000,
-    });
-
-    // Reset the form values
-    form.reset({
-      occasion: "bridal",
-      date: undefined,
-      time: "10:00",
-      location: "",
-      peopleCount: 1,
-      vision: "",
-      fullName: "",
-      whatsapp: "",
-      email: "",
-    });
+        // Reset the form values
+        form.reset({
+          occasion: "bridal",
+          date: undefined,
+          time: "10:00",
+          location: "",
+          peopleCount: 1,
+          vision: "",
+          fullName: "",
+          whatsapp: "",
+          email: "",
+        });
+      } else {
+        toast.error(res.error || "Failed to submit booking request. Please try again.");
+      }
+    } catch (error: any) {
+      console.error(error);
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
