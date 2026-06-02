@@ -18,7 +18,6 @@ export const metadata = {
 };
 
 export default async function DashboardPage() {
-  // Format current date matching the landing page theme context
   const currentDate = new Date().toLocaleDateString("en-IN", {
     weekday: "long",
     day: "numeric",

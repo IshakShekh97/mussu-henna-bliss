@@ -34,6 +34,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { authClient } from "@/lib/auth-client";
+import { cn } from "@/lib/utils";
 
 interface AdminSidebarProps {
   user?: {
@@ -98,9 +99,15 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
       collapsible="icon"
       className="border-r border-[#EBE4DC] bg-[#FDFBF7]"
     >
-      <SidebarHeader className="border-b border-[#EBE4DC] p-4 min-h-16 flex justify-center">
-        <Link href="/admin" className="flex items-center gap-2 overflow-hidden">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary text-white font-serif font-bold text-lg shadow-sm">
+      <SidebarHeader className={cn(
+        "border-b border-[#EBE4DC] min-h-16 flex items-center transition-all duration-300",
+        isCollapsed ? "p-2 justify-center" : "p-4"
+      )}>
+        <Link href="/admin" className="flex items-center gap-2.5 overflow-hidden justify-center w-full">
+          <div className={cn(
+            "flex shrink-0 items-center justify-center bg-primary text-white font-serif font-bold shadow-md transition-all duration-300 hover:scale-105 select-none",
+            isCollapsed ? "h-8 w-8 rounded-lg text-base" : "h-9 w-9 rounded-xl text-lg"
+          )}>
             M
           </div>
           {!isCollapsed && (
@@ -116,13 +123,13 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
         </Link>
       </SidebarHeader>
 
-      <SidebarContent className="py-4">
+      <SidebarContent className="py-6">
         <SidebarGroup>
-          <SidebarGroupLabel className="text-[#8C7A6B] font-medium tracking-wide">
+          <SidebarGroupLabel className="text-[#8C7A6B] font-semibold tracking-wider uppercase text-[10px] px-3">
             Management
           </SidebarGroupLabel>
-          <SidebarGroupContent className="mt-2">
-            <SidebarMenu>
+          <SidebarGroupContent className="mt-3">
+            <SidebarMenu className="gap-1.5">
               {NAV_ITEMS.map((item) => {
                 const isActive =
                   item.url === "/admin"
@@ -136,17 +143,21 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
                       asChild
                       isActive={isActive}
                       tooltip={item.title}
-                      className={`hover:bg-primary/5 hover:text-primary transition-all duration-200 ${
+                      className={cn(
+                        "hover:bg-primary/5 hover:text-primary transition-all duration-200 h-10 rounded-xl px-3",
                         isActive
                           ? "bg-primary/10 text-primary font-semibold"
                           : "text-[#5C4D3E]"
-                      }`}
+                      )}
                     >
                       <Link href={item.url} className="flex items-center gap-3">
                         <item.icon
-                          className={`h-4.5 w-4.5 shrink-0 ${isActive ? "text-primary" : "text-[#8C7A6B]"}`}
+                          className={cn(
+                            "h-5 w-5 shrink-0 transition-transform duration-200 group-hover:scale-105",
+                            isActive ? "text-primary" : "text-[#8C7A6B]"
+                          )}
                         />
-                        <span>{item.title}</span>
+                        <span className="text-xs font-medium tracking-wide">{item.title}</span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -157,20 +168,20 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
         </SidebarGroup>
 
         <SidebarGroup className="mt-auto">
-          <SidebarGroupLabel className="text-[#8C7A6B] font-medium tracking-wide">
+          <SidebarGroupLabel className="text-[#8C7A6B] font-semibold tracking-wider uppercase text-[10px] px-3">
             Shortcuts
           </SidebarGroupLabel>
-          <SidebarGroupContent className="mt-2">
-            <SidebarMenu>
+          <SidebarGroupContent className="mt-3">
+            <SidebarMenu className="gap-1.5">
               <SidebarMenuItem>
                 <SidebarMenuButton
                   asChild
                   tooltip="Back to Website"
-                  className="hover:bg-primary/5 hover:text-primary text-[#5C4D3E] transition-all duration-200"
+                  className="hover:bg-primary/5 hover:text-primary text-[#5C4D3E] transition-all duration-200 h-10 rounded-xl px-3"
                 >
                   <Link href="/" className="flex items-center gap-3">
-                    <Globe className="h-4.5 w-4.5 shrink-0 text-[#8C7A6B]" />
-                    <span>Back to Website</span>
+                    <Globe className="h-5 w-5 shrink-0 text-[#8C7A6B] transition-transform duration-200 group-hover:scale-105" />
+                    <span className="text-xs font-medium tracking-wide">Back to Website</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -179,14 +190,20 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="border-t border-[#EBE4DC] p-3 bg-[#FAF6F0]">
+      <SidebarFooter className={cn(
+        "border-t border-[#EBE4DC] bg-[#FAF6F0] transition-all duration-300",
+        isCollapsed ? "p-2" : "p-3"
+      )}>
         <SidebarMenu>
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton
                   size="lg"
-                  className="w-full justify-between hover:bg-primary/5 text-[#5C4D3E] transition-all duration-200"
+                  className={cn(
+                    "w-full justify-between hover:bg-primary/5 text-[#5C4D3E] transition-all duration-200 rounded-xl",
+                    isCollapsed ? "h-8 p-0" : "h-12 px-3"
+                  )}
                 >
                   <div className="flex items-center gap-2 overflow-hidden">
                     {user?.image ? (
@@ -196,7 +213,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
                         className="h-8 w-8 rounded-full border border-primary/20 object-cover"
                       />
                     ) : (
-                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 border border-primary/20 text-primary font-semibold text-xs">
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 border border-primary/20 text-primary font-bold text-xs shadow-2xs">
                         {getInitials(user?.name)}
                       </div>
                     )}
@@ -218,7 +235,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 align="end"
-                className="w-56 bg-[#FDFBF7] border border-[#EBE4DC] p-1 shadow-md"
+                className="w-56 bg-[#FDFBF7] border border-[#EBE4DC] p-1 shadow-md rounded-xl"
               >
                 <div className="px-2 py-1.5 text-xs text-muted-foreground">
                   Logged in as{" "}
@@ -230,7 +247,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
                 <DropdownMenuItem asChild>
                   <Link
                     href="/"
-                    className="flex items-center gap-2 cursor-pointer hover:bg-primary/5 hover:text-primary rounded-md p-2"
+                    className="flex items-center gap-2 cursor-pointer hover:bg-primary/5 hover:text-primary rounded-lg p-2 text-xs text-[#5C4D3E]"
                   >
                     <Globe className="h-4 w-4 text-[#8C7A6B]" />
                     <span>Visit website</span>
@@ -239,7 +256,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
                 <DropdownMenuSeparator className="bg-[#EBE4DC]" />
                 <DropdownMenuItem
                   onClick={handleLogout}
-                  className="flex items-center gap-2 cursor-pointer text-destructive focus:bg-destructive/10 focus:text-destructive rounded-md p-2"
+                  className="flex items-center gap-2 cursor-pointer text-destructive focus:bg-destructive/10 focus:text-destructive rounded-lg p-2 text-xs font-medium"
                 >
                   <LogOut className="h-4 w-4" />
                   <span>Log out</span>

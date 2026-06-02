@@ -4,6 +4,7 @@ import React from "react";
 import { CheckCircle2 } from "lucide-react";
 import { BookingCard } from "./booking-card";
 import { Booking } from "@/lib/zodSchemas";
+import { Button } from "@/components/ui/button";
 
 interface PipelineViewProps {
   bookings: Booking[];
@@ -12,6 +13,8 @@ interface PipelineViewProps {
   onDelete: (id: string) => void;
   onStatusChange: (id: string, nextStatus: string) => void;
   isPending: boolean;
+  onClearFilters?: () => void;
+  isFiltered?: boolean;
 }
 
 export function PipelineView({
@@ -21,6 +24,8 @@ export function PipelineView({
   onDelete,
   onStatusChange,
   isPending,
+  onClearFilters,
+  isFiltered,
 }: PipelineViewProps) {
   return (
     <div className="space-y-4">
@@ -33,8 +38,19 @@ export function PipelineView({
               No bookings found
             </span>
             <p className="text-xs text-muted-foreground mt-1">
-              There are no records matching the selected status.
+              {isFiltered
+                ? "Try adjusting your search terms or filters."
+                : "There are no records matching the selected status."}
             </p>
+            {isFiltered && onClearFilters && (
+              <Button
+                variant="outline"
+                className="mt-4 border-[#EBE4DC] text-[#4E3E2F] hover:bg-[#FAF6F0] rounded-xl text-xs py-2 h-8 px-4 cursor-pointer"
+                onClick={onClearFilters}
+              >
+                Clear Filters
+              </Button>
+            )}
           </div>
         ) : (
           bookings.map((b) => (

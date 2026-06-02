@@ -39,7 +39,7 @@ export function HandoffDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md bg-[#FDFBF7] border border-[#EBE4DC] rounded-2xl p-6 shadow-lg text-center gap-5">
+      <DialogContent className="max-w-lg! w-full bg-[#FDFBF7] border border-[#EBE4DC] rounded-2xl p-6 shadow-lg text-center gap-5">
         <DialogHeader className="items-center">
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200 mb-2">
             <Sparkles className="h-6 w-6 text-emerald-600 animate-pulse" />

@@ -24,7 +24,7 @@ const LINKS = [
   { name: "Home", href: "/", icon: HomeIcon },
   { name: "Shop", href: "/shop", icon: ShoppingBagIcon },
   { name: "Booking", href: "/book", icon: ClipboardClockIcon },
-  { name: "Gallery", href: "/gallery", icon: HomeIcon },
+  // { name: "Gallery", href: "/gallery", icon: HomeIcon },
   { name: "Track Order", href: "/status", icon: Search },
 ];
 

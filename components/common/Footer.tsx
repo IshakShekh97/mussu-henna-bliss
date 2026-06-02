@@ -254,7 +254,7 @@ const Footer = () => {
             variants={itemVariants}
             className="flex flex-col space-y-5"
           >
-            <div className="flex flex-col space-y-3">
+            {/* <div className="flex flex-col space-y-3">
               <h3 className="text-lg font-serif font-medium text-[#C5A880] flex items-center gap-2">
                 <Mail className="w-4 h-4 text-[#C5A880]/60" /> Newsletter
               </h3>
@@ -263,7 +263,6 @@ const Footer = () => {
                 booking openings.
               </p>
 
-              {/* Form Input */}
               <form onSubmit={handleSubscribe} className="relative mt-1">
                 <div className="flex items-center border-b border-white/15 focus-within:border-[#C5A880]/70 transition-colors duration-300 pb-1">
                   <input
@@ -299,7 +298,7 @@ const Footer = () => {
                   )}
                 </AnimatePresence>
               </form>
-            </div>
+            </div> */}
 
             {/* Studio Hours & Address */}
             <div className="pt-2 border-t border-white/5 space-y-2">
@@ -334,11 +333,11 @@ const Footer = () => {
           <div className="flex flex-col items-center sm:items-start gap-2">
             <div className="flex flex-wrap justify-center sm:justify-start gap-x-5 gap-y-1">
               <a
-                href="mailto:contact@mussuhennabliss.com"
+                href={`mailto:${process.env.SMTP_USER}`}
                 className="flex items-center gap-1.5 hover:text-[#C5A880] transition-colors"
               >
                 <Mail className="w-3.5 h-3.5" />
-                <span>contact@mussuhennabliss.com</span>
+                <span>{process.env.SMTP_USER}</span>
               </a>
               <a
                 href="https://wa.me/1234567890"
@@ -349,7 +348,7 @@ const Footer = () => {
               </a>
             </div>
             <p className="text-center sm:text-left mt-1 text-[#FAF6F0]/50">
-              © {currentYear} Mussu&apos;s Henna Bliss. All rights reserved.
+              © {currentYear} {"Mussu's"} Henna Bliss. All rights reserved.
               Crafted with love & art.
             </p>
           </div>

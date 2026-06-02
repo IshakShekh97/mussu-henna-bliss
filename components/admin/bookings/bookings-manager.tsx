@@ -7,10 +7,18 @@ import React, {
   useEffect,
 } from "react";
 import { useRouter } from "next/navigation";
-import { Plus } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { updateBookingStatus } from "@/app/actions/booking.action";
 
@@ -36,6 +44,10 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
   // Tabs states
   const [viewTab, setViewTab] = useState<string>("pipeline"); // pipeline | calendar
   const [filterTab, setFilterTab] = useState<string>("all"); // all | requested | quoted | accepted | completed | cancelled
+
+  // Search & Sorting states
+  const [search, setSearch] = useState("");
+  const [sortOption, setSortOption] = useState("eventDate-asc");
 
   // Dialog / Modal states
   const [handoffOpen, setHandoffOpen] = useState(false);
@@ -97,16 +109,47 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
     optimisticBookings.find((b) => b.id === selectedBookingId) || null;
 
   // -----------------------------------------
-  // Filtering Logic (Left Rail)
+  // Filtering & Sorting Logic
   // -----------------------------------------
-  const filteredBookings = optimisticBookings.filter((b) => {
-    if (filterTab === "requested") return b.status === "PENDING_QUOTE";
-    if (filterTab === "quoted") return b.status === "QUOTED";
-    if (filterTab === "accepted") return b.status === "ACCEPTED";
-    if (filterTab === "completed") return b.status === "COMPLETED";
-    if (filterTab === "cancelled") return b.status === "CANCELLED";
-    return true; // "all"
-  });
+  const filteredBookings = optimisticBookings
+    .filter((b) => {
+      // 1. Status Filter
+      if (filterTab === "requested" && b.status !== "PENDING_QUOTE") return false;
+      if (filterTab === "quoted" && b.status !== "QUOTED") return false;
+      if (filterTab === "accepted" && b.status !== "ACCEPTED") return false;
+      if (filterTab === "completed" && b.status !== "COMPLETED") return false;
+      if (filterTab === "cancelled" && b.status !== "CANCELLED") return false;
+
+      // 2. Search Filter
+      const query = search.toLowerCase().trim();
+      if (!query) return true;
+
+      return (
+        b.customerName.toLowerCase().includes(query) ||
+        b.email.toLowerCase().includes(query) ||
+        b.phone.toLowerCase().includes(query) ||
+        b.location.toLowerCase().includes(query) ||
+        b.eventType.toLowerCase().includes(query) ||
+        (b.designNotes && b.designNotes.toLowerCase().includes(query)) ||
+        (b.artistNotes && b.artistNotes.toLowerCase().includes(query))
+      );
+    })
+    .sort((a, b) => {
+      // 3. Sorting Logic
+      switch (sortOption) {
+        case "eventDate-desc":
+          return new Date(b.eventDate).getTime() - new Date(a.eventDate).getTime();
+        case "price-asc":
+          return (a.quotedPrice || 0) - (b.quotedPrice || 0);
+        case "price-desc":
+          return (b.quotedPrice || 0) - (a.quotedPrice || 0);
+        case "createdAt-desc":
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        case "eventDate-asc":
+        default:
+          return new Date(a.eventDate).getTime() - new Date(b.eventDate).getTime();
+      }
+    });
 
   // -----------------------------------------
   // Dialog Open Helpers
@@ -235,6 +278,36 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
         </Button>
       </div>
 
+      {/* 📝 SECTION C: Search & Sorting */}
+      <div className="flex flex-col md:flex-row gap-4 bg-[#FDFBF7] border border-[#EBE4DC] p-4 rounded-2xl shadow-xs">
+        {/* Search */}
+        <div className="relative flex-1 w-full">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#8C7A6B]/50 shrink-0" />
+          <Input
+            placeholder="Search bookings by customer name, email, phone, location or occasion..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-9 bg-[#FDFBF7] border-[#EBE4DC] text-sm text-[#4E3E2F] placeholder:text-[#8C7A6B]/50 focus:border-primary/50 focus:ring-2 focus:ring-primary/10 rounded-xl h-10 w-full"
+          />
+        </div>
+
+        {/* Sort Select */}
+        <div className="w-full md:w-[240px] shrink-0">
+          <Select value={sortOption} onValueChange={setSortOption}>
+            <SelectTrigger className="bg-[#FDFBF7] border-[#EBE4DC] text-sm text-[#4E3E2F] rounded-xl h-10 w-full focus:ring-primary/10 focus:border-primary/50">
+              <SelectValue placeholder="Sort bookings" />
+            </SelectTrigger>
+            <SelectContent className="bg-white border border-[#EBE4DC] rounded-xl">
+              <SelectItem value="eventDate-asc">Event Date: Oldest to Newest</SelectItem>
+              <SelectItem value="eventDate-desc">Event Date: Newest to Oldest</SelectItem>
+              <SelectItem value="price-asc">Price: Low to High</SelectItem>
+              <SelectItem value="price-desc">Price: High to Low</SelectItem>
+              <SelectItem value="createdAt-desc">Created: Newest to Oldest</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
       {/* 🎨 DUAL-VIEW SPLIT LAYOUT */}
       {viewTab === "pipeline" ? (
         <PipelineView
@@ -244,9 +317,14 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
           onDelete={handleOpenDelete}
           onStatusChange={handleStatusChangeFromCard}
           isPending={isPending}
+          onClearFilters={() => {
+            setSearch("");
+            setFilterTab("all");
+          }}
+          isFiltered={search !== "" || filterTab !== "all"}
         />
       ) : (
-        <CalendarView bookings={optimisticBookings} onView={handleOpenView} />
+        <CalendarView bookings={filteredBookings} onView={handleOpenView} />
       )}
 
       {/* 🛠️ INTERACTIVE MECHANICS DIALOGS */}

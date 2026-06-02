@@ -333,3 +333,29 @@ export async function updateBooking(
     };
   }
 }
+
+/**
+ * Fetches the recent booking requests pipeline (Needs Attention: latest 5 PENDING_QUOTE or QUOTED bookings).
+ */
+export async function getRecentBookingRequests() {
+  try {
+    const bookings = await prisma.booking.findMany({
+      where: {
+        status: {
+          in: ["PENDING_QUOTE", "QUOTED"],
+        },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 5,
+    });
+    return { success: true, data: bookings };
+  } catch (error: any) {
+    console.error("Failed to fetch recent booking requests:", error);
+    return {
+      success: false,
+      error: error.message || "Failed to fetch bookings",
+      data: [],
+    };
+  }
+}
+
