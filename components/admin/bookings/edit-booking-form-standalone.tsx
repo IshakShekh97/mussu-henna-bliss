@@ -17,6 +17,13 @@ import {
   FieldError,
   FieldGroup,
 } from "@/components/ui/field";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { DateTimePicker } from "@/components/book/DateTimePicker";
 import {
   Booking,
@@ -239,18 +246,22 @@ export function EditBookingFormStandalone({
                       >
                         Event Occasion *
                       </FieldLabel>
-                      <select
-                        {...field}
-                        id="edit-type"
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
                         disabled={isPending}
-                        className="w-full px-3 h-10 border border-[#EBE4DC] bg-white rounded-lg text-xs focus-visible:ring-primary/40"
                       >
-                        <option value="Bridal">Bridal Mehndi</option>
-                        <option value="Sangeet">Sangeet Party</option>
-                        <option value="Guest">Guest Mehndi</option>
-                        <option value="Festive">Festive Mehndi</option>
-                        <option value="Photoshoot">Photoshoot / Other</option>
-                      </select>
+                        <SelectTrigger id="edit-type" className="bg-white border-[#EBE4DC] h-10 text-xs">
+                          <SelectValue placeholder="Select Occasion" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-white border-[#EBE4DC]">
+                          <SelectItem value="Bridal">Bridal Mehndi</SelectItem>
+                          <SelectItem value="Sangeet">Sangeet Party</SelectItem>
+                          <SelectItem value="Guest">Guest Mehndi</SelectItem>
+                          <SelectItem value="Festive">Festive Mehndi</SelectItem>
+                          <SelectItem value="Photoshoot">Photoshoot / Other</SelectItem>
+                        </SelectContent>
+                      </Select>
                       {fieldState.invalid && (
                         <FieldError errors={[fieldState.error]} />
                       )}
@@ -395,18 +406,22 @@ export function EditBookingFormStandalone({
                     >
                       Current Status
                     </FieldLabel>
-                    <select
-                      {...field}
-                      id="edit-status"
+                    <Select
+                      value={field.value}
+                      onValueChange={field.onChange}
                       disabled={isPending}
-                      className="w-full px-3 h-10 border border-[#EBE4DC] bg-white rounded-lg text-xs focus-visible:ring-primary/40"
                     >
-                      <option value="PENDING_QUOTE">Requested</option>
-                      <option value="QUOTED">Quoted</option>
-                      <option value="ACCEPTED">Accepted (Booked)</option>
-                      <option value="COMPLETED">Completed</option>
-                      <option value="CANCELLED">Cancelled</option>
-                    </select>
+                      <SelectTrigger id="edit-status" className="bg-white border-[#EBE4DC] h-10 text-xs">
+                        <SelectValue placeholder="Select Status" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white border-[#EBE4DC]">
+                        <SelectItem value="PENDING_QUOTE">Requested</SelectItem>
+                        <SelectItem value="QUOTED">Quoted</SelectItem>
+                        <SelectItem value="ACCEPTED">Accepted (Booked)</SelectItem>
+                        <SelectItem value="COMPLETED">Completed</SelectItem>
+                        <SelectItem value="CANCELLED">Cancelled</SelectItem>
+                      </SelectContent>
+                    </Select>
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
                     )}

@@ -49,6 +49,7 @@ model Order {
 
   totalAmount Float
   status      OrderStatus @default(PENDING)
+  paymentMethod String @default("COD") // "PREPAID" or "COD"
 
   // Relation to the items purchased
   items OrderItem[]

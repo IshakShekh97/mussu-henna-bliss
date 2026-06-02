@@ -12,6 +12,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Field, FieldLabel, FieldError, FieldGroup } from "@/components/ui/field";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { DateTimePicker } from "@/components/book/DateTimePicker";
 import { manualBookingSchema, type manualBookingSchemaType } from "@/lib/zodSchemas";
 import { createBooking } from "@/app/actions/booking.action";
@@ -180,18 +187,22 @@ export function ManualBookingFormStandalone() {
                       <FieldLabel htmlFor="manual-type" className="text-xs font-semibold text-[#5C4D3E]">
                         Event Occasion *
                       </FieldLabel>
-                      <select
-                        {...field}
-                        id="manual-type"
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
                         disabled={isPending}
-                        className="w-full px-3 h-10 border border-[#EBE4DC] bg-white rounded-lg text-xs focus-visible:ring-primary/40"
                       >
-                        <option value="Bridal">Bridal Mehndi</option>
-                        <option value="Sangeet">Sangeet Party</option>
-                        <option value="Guest">Guest Mehndi</option>
-                        <option value="Festive">Festive Mehndi</option>
-                        <option value="Photoshoot">Photoshoot / Other</option>
-                      </select>
+                        <SelectTrigger id="manual-type" className="bg-white border-[#EBE4DC] h-10 text-xs">
+                          <SelectValue placeholder="Select Occasion" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-white border-[#EBE4DC]">
+                          <SelectItem value="Bridal">Bridal Mehndi</SelectItem>
+                          <SelectItem value="Sangeet">Sangeet Party</SelectItem>
+                          <SelectItem value="Guest">Guest Mehndi</SelectItem>
+                          <SelectItem value="Festive">Festive Mehndi</SelectItem>
+                          <SelectItem value="Photoshoot">Photoshoot / Other</SelectItem>
+                        </SelectContent>
+                      </Select>
                       {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                     </Field>
                   )}
@@ -315,15 +326,19 @@ export function ManualBookingFormStandalone() {
                     <FieldLabel htmlFor="manual-status" className="text-xs font-semibold text-[#5C4D3E]">
                       Initial Status
                     </FieldLabel>
-                    <select
-                      {...field}
-                      id="manual-status"
+                    <Select
+                      value={field.value}
+                      onValueChange={field.onChange}
                       disabled={isPending}
-                      className="w-full px-3 h-10 border border-[#EBE4DC] bg-white rounded-lg text-xs focus-visible:ring-primary/40"
                     >
-                      <option value="PENDING_QUOTE">Requested</option>
-                      <option value="ACCEPTED">Accepted (Booked)</option>
-                    </select>
+                      <SelectTrigger id="manual-status" className="bg-white border-[#EBE4DC] h-10 text-xs">
+                        <SelectValue placeholder="Select Status" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white border-[#EBE4DC]">
+                        <SelectItem value="PENDING_QUOTE">Requested</SelectItem>
+                        <SelectItem value="ACCEPTED">Accepted (Booked)</SelectItem>
+                      </SelectContent>
+                    </Select>
                     {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                   </Field>
                 )}

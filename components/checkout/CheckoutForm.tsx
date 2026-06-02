@@ -87,7 +87,7 @@ export default function CheckoutForm() {
         const encodedMessage = encodeURIComponent(messageText);
 
         const ownerWhatsAppNumber =
-          process.env.NEXT_PUBLIC_OWNER_WHATSAPP_NUMBER || "916290665156";
+          process.env.NEXT_PUBLIC_OWNER_WHATSAPP_NUMBER;
         const whatsappUrl = `https://wa.me/${ownerWhatsAppNumber}?text=${encodedMessage}`;
 
         // 3. Open WhatsApp link and redirect status page in local client

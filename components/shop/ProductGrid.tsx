@@ -1,56 +1,27 @@
-"use client";
+import { getProducts } from "@/app/actions/product.action";
+import ProductGridClient from "./ProductGridClient";
 
-import ProductCard from "./ProductCard";
+export default async function ProductGrid() {
+  const result = await getProducts();
+  const products = result.success ? result.data : [];
 
-const sampleProducts = [
-  {
-    id: "1",
-    name: "Organic Bridal Cone",
-    price: 12.0,
-    imagePath: "/images/hero-1.jpg",
-  },
-  {
-    id: "2",
-    name: "Practice Cone - Natural",
-    price: 8.0,
-    imagePath: "/images/hero-2.jpg",
-  },
-  {
-    id: "3",
-    name: "Nail Henna Duo",
-    price: 6.5,
-    imagePath: "/images/hero-3.jpg",
-  },
-  {
-    id: "4",
-    name: "Bridal Cone - Large",
-    price: 15.0,
-    imagePath: "/images/hero-4.jpg",
-  },
-  {
-    id: "5",
-    name: "Practice Cone - Mini",
-    price: 5.0,
-    imagePath: "/images/hero-5.jpg",
-  },
-  {
-    id: "6",
-    name: "Nail Henna - Sample",
-    price: 4.0,
-    imagePath: "/images/hero-6.jpg",
-  },
-];
-
-export default function ProductGrid() {
-  const filtered = sampleProducts.filter(() => true);
+  if (products.length === 0) {
+    return (
+      <div className="text-center py-16 bg-[#FDFBF7] border border-[#EBE4DC] rounded-2xl relative overflow-hidden">
+        <div className="absolute inset-1.5 border-[0.5px] border-[#EBE4DC]/60 rounded-xl pointer-events-none z-0" />
+        <div className="relative z-10 max-w-md mx-auto space-y-3 px-6">
+          <p className="text-lg text-gray-700 font-light font-serif">✨ No Products Available</p>
+          <p className="text-xs text-muted-foreground font-light leading-relaxed">
+            Our products are currently being updated. Check back soon for fresh batches of organic henna cones and kits!
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <section>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {filtered.map((p) => (
-          <ProductCard key={p.id} product={p} />
-        ))}
-      </div>
+      <ProductGridClient initialProducts={products as any} />
     </section>
   );
 }

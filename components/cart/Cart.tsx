@@ -19,6 +19,7 @@ interface CartProps {
 }
 
 const Cart = ({ children }: CartProps) => {
+  const [open, setOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const { items, addItem, removeItem, updateQuantity, clearCart } =
     useCartStore();
@@ -37,7 +38,7 @@ const Cart = ({ children }: CartProps) => {
   if (!isMounted) return null;
 
   return (
-    <Sheet>
+    <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>{children}</SheetTrigger>
       <SheetContent
         aria-describedby="cart content"
@@ -163,6 +164,7 @@ const Cart = ({ children }: CartProps) => {
             <Button
               asChild
               className="w-full py-6 rounded-xl text-md font-semibold tracking-wide shadow-md"
+              onClick={() => setOpen(false)}
             >
               <Link href="/checkout">Proceed to Checkout</Link>
             </Button>

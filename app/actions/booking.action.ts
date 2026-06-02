@@ -21,6 +21,9 @@ export async function createCustomerBooking(data: bookingFormSchemaType) {
       time,
       location,
       peopleCount,
+      hennaStyle,
+      hennaType,
+      coverage,
       vision,
       fullName,
       whatsapp,
@@ -34,11 +37,16 @@ export async function createCustomerBooking(data: bookingFormSchemaType) {
       eventDate.setHours(hours, minutes, 0, 0);
     }
 
-    // Map occasion option to appropriate eventType string
-    let eventType = occasion.charAt(0).toUpperCase() + occasion.slice(1);
-    if (eventType === "Festive") eventType = "Festive Mehndi";
-    if (eventType === "Bridal") eventType = "Bridal Mehndi";
-    if (eventType === "Guest") eventType = "Guest Mehndi";
+    // Since occasion is freeform string, map it directly to eventType (matching the schema)
+    const eventType = occasion;
+
+    // Combine advanced details into designNotes
+    const designNotes = `Henna Style: ${hennaStyle}
+Henna Type: ${hennaType}
+Coverage: ${coverage}
+
+Vision / Detailed Requirements:
+${vision}`;
 
     const booking = await prisma.booking.create({
       data: {
@@ -49,7 +57,7 @@ export async function createCustomerBooking(data: bookingFormSchemaType) {
         eventDate,
         location,
         guestCount: peopleCount,
-        designNotes: vision,
+        designNotes,
         status: "PENDING_QUOTE",
       },
     });

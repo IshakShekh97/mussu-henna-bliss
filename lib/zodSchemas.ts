@@ -1,13 +1,16 @@
 import z from "zod";
 
 export const bookingSchema = z.object({
-  occasion: z.enum(["bridal", "guest", "festive"]),
+  occasion: z.string().min(2, "Please select or specify an event occasion."),
   date: z.date({
     message: "Please select a date for your event.",
   }),
   time: z.string().min(1, "Please select a start time."),
   location: z.string().min(5, "Event location must be at least 5 characters."),
   peopleCount: z.number().min(1, "At least 1 person is required."),
+  hennaStyle: z.string().min(1, "Please select a style preference."),
+  hennaType: z.string().min(1, "Please select a henna type."),
+  coverage: z.string().min(1, "Please select a coverage preference."),
   vision: z
     .string()
     .min(10, "Please describe your vision in at least 10 characters.")
@@ -148,4 +151,30 @@ export const productSchema = z.object({
 });
 
 export type ProductFormSchemaType = z.infer<typeof productSchema>;
+
+export const updateOrderSchema = z.object({
+  status: z.enum(["PENDING", "PAID", "FULFILLED", "CANCELLED"]),
+  paymentMethod: z.enum(["PREPAID", "COD"]),
+});
+
+export type updateOrderSchemaType = z.infer<typeof updateOrderSchema>;
+
+export const manualOrderCreateSchema = z.object({
+  customerName: z.string().min(2, "Customer name must be at least 2 characters."),
+  email: z.string().email("Please enter a valid email address."),
+  phone: z.string().regex(/^[6-9]\d{9}$/, "Please enter a valid 10-digit Indian mobile number"),
+  address: z.string().min(10, "Fulfillment address must be at least 10 characters."),
+  status: z.enum(["PENDING", "PAID", "FULFILLED", "CANCELLED"]),
+  paymentMethod: z.enum(["PREPAID", "COD"]),
+  items: z.array(
+    z.object({
+      productId: z.string().min(1, "Product is required"),
+      quantity: z.number().min(1, "Quantity must be at least 1"),
+    })
+  ).min(1, "Please add at least one product item."),
+});
+
+export type manualOrderCreateSchemaType = z.infer<typeof manualOrderCreateSchema>;
+
+
 

@@ -41,9 +41,9 @@ export default async function OrderStatusPage({ params }: PageProps) {
 
   // Render a beautiful not found state inside the component for better UX
   if (!order) {
-    const ownerWhatsAppNumber = process.env.NEXT_PUBLIC_OWNER_WHATSAPP_NUMBER || "916290665156";
+    const ownerWhatsAppNumber = process.env.NEXT_PUBLIC_OWNER_WHATSAPP_NUMBER;
     const helpUrl = `https://wa.me/${ownerWhatsAppNumber}?text=${encodeURIComponent(
-      `Hi Muskan! I am trying to track my order but the system says it doesn't exist. My Order ID is: ${id}`
+      `Hi Muskan! I am trying to track my order but the system says it doesn't exist. My Order ID is: ${id}`,
     )}`;
 
     return (
@@ -64,18 +64,31 @@ export default async function OrderStatusPage({ params }: PageProps) {
         <div className="absolute inset-1.5 border-[0.5px] border-[#EBE4DC]/60 rounded-2xl pointer-events-none" />
 
         <AlertTriangle className="h-16 w-16 text-primary mx-auto mb-4 stroke-[1.2] animate-bounce-slow" />
-        <h1 className="text-3xl font-morlana font-light text-gray-800 mb-2">Order Not Found</h1>
+        <h1 className="text-3xl font-morlana font-light text-gray-800 mb-2">
+          Order Not Found
+        </h1>
         <p className="text-muted-foreground text-sm max-w-md mx-auto mb-8 font-light leading-relaxed">
-          We couldn't find an order with ID <span className="font-mono bg-secondary px-1.5 py-0.5 rounded text-xs">{id}</span>. Please verify your tracking URL or contact Muskan for help.
+          We couldn't find an order with ID{" "}
+          <span className="font-mono bg-secondary px-1.5 py-0.5 rounded text-xs">
+            {id}
+          </span>
+          . Please verify your tracking URL or contact Muskan for help.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center relative z-10">
-          <Button asChild variant="outline" className="rounded-xl border-[#EBE4DC] hover:bg-muted font-sans px-6 py-5">
+          <Button
+            asChild
+            variant="outline"
+            className="rounded-xl border-[#EBE4DC] hover:bg-muted font-sans px-6 py-5"
+          >
             <Link href="/shop">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Shop
             </Link>
           </Button>
-          <Button asChild className="rounded-xl bg-pink-500 hover:bg-pink-600 text-white font-sans px-6 py-5">
+          <Button
+            asChild
+            className="rounded-xl bg-pink-500 hover:bg-pink-600 text-white font-sans px-6 py-5"
+          >
             <a href={helpUrl} target="_blank" rel="noopener noreferrer">
               Contact Support
             </a>
@@ -87,11 +100,12 @@ export default async function OrderStatusPage({ params }: PageProps) {
 
   const isCancelled = order.status === "CANCELLED";
   const isFulfilled = order.status === "FULFILLED";
-  const isCompletedStep2 = order.status === "PAID" || order.status === "FULFILLED";
+  const isCompletedStep2 =
+    order.status === "PAID" || order.status === "FULFILLED";
 
-  const ownerWhatsAppNumber = process.env.NEXT_PUBLIC_OWNER_WHATSAPP_NUMBER || "916290665156";
+  const ownerWhatsAppNumber = process.env.NEXT_PUBLIC_OWNER_WHATSAPP_NUMBER;
   const contactUrl = `https://wa.me/${ownerWhatsAppNumber}?text=${encodeURIComponent(
-    `Hi Muskan! I have a question about my order ${order.id}.`
+    `Hi Muskan! I have a question about my order ${order.id}.`,
   )}`;
 
   return (
@@ -109,12 +123,18 @@ export default async function OrderStatusPage({ params }: PageProps) {
 
       {/* Header Info */}
       <div className="text-center max-w-2xl mx-auto mb-12">
-        <div className="text-lg font-light mb-2 font-serif text-primary">✨ Order Tracking</div>
+        <div className="text-lg font-light mb-2 font-serif text-primary">
+          ✨ Order Tracking
+        </div>
         <h1 className="text-4xl md:text-5xl font-morlana font-light text-gray-800 leading-tight">
-          Track Your <span className="text-primary font-black">Henna Bliss</span> Order
+          Track Your{" "}
+          <span className="text-primary font-black">Henna Bliss</span> Order
         </h1>
         <p className="text-sm text-muted-foreground mt-3 font-light">
-          Order ID: <span className="font-mono text-xs bg-[#FAF9F5] border border-[#EBE4DC] px-2 py-1 rounded-md text-foreground">{order.id}</span>
+          Order ID:{" "}
+          <span className="font-mono text-xs bg-[#FAF9F5] border border-[#EBE4DC] px-2 py-1 rounded-md text-foreground">
+            {order.id}
+          </span>
         </p>
       </div>
 
@@ -150,7 +170,10 @@ export default async function OrderStatusPage({ params }: PageProps) {
                 <AlertTriangle className="h-5 w-5 mt-0.5" />
                 <div>
                   <h4 className="font-bold text-sm">Order Cancelled</h4>
-                  <p className="text-xs font-light mt-0.5">This order has been marked as cancelled. Please contact Muskan if you think this is a mistake.</p>
+                  <p className="text-xs font-light mt-0.5">
+                    This order has been marked as cancelled. Please contact
+                    Muskan if you think this is a mistake.
+                  </p>
                 </div>
               </div>
             ) : null}
@@ -163,7 +186,9 @@ export default async function OrderStatusPage({ params }: PageProps) {
                   <Check className="h-3 w-3" />
                 </div>
                 <div>
-                  <h4 className="font-bold text-sm text-gray-800">Order Received</h4>
+                  <h4 className="font-bold text-sm text-gray-800">
+                    Order Received
+                  </h4>
                   <p className="text-xs text-muted-foreground font-light mt-0.5 leading-relaxed">
                     We have successfully logged your order details.
                   </p>
@@ -184,8 +209,8 @@ export default async function OrderStatusPage({ params }: PageProps) {
                     isCompletedStep2
                       ? "bg-green-500 text-white"
                       : isCancelled
-                      ? "bg-destructive text-white"
-                      : "bg-yellow-500 text-white animate-pulse"
+                        ? "bg-destructive text-white"
+                        : "bg-yellow-500 text-white animate-pulse",
                   )}
                 >
                   {isCompletedStep2 ? (
@@ -197,13 +222,15 @@ export default async function OrderStatusPage({ params }: PageProps) {
                   )}
                 </div>
                 <div>
-                  <h4 className="font-bold text-sm text-gray-800">Preparation & Confirmation</h4>
+                  <h4 className="font-bold text-sm text-gray-800">
+                    Preparation & Confirmation
+                  </h4>
                   <p className="text-xs text-muted-foreground font-light mt-0.5 leading-relaxed">
                     {isCancelled
                       ? "This order was cancelled."
                       : isCompletedStep2
-                      ? "Your order has been confirmed and freshly prepared."
-                      : "Muskan is reviewing your details to prepare your fresh, natural henna cones."}
+                        ? "Your order has been confirmed and freshly prepared."
+                        : "Muskan is reviewing your details to prepare your fresh, natural henna cones."}
                   </p>
                 </div>
               </div>
@@ -213,13 +240,21 @@ export default async function OrderStatusPage({ params }: PageProps) {
                 <div
                   className={cn(
                     "absolute -left-[41px] top-0.5 rounded-full h-6 w-6 flex items-center justify-center border-4 border-[#FDFBF7] transition-all duration-300",
-                    isFulfilled ? "bg-green-500 text-white" : "bg-gray-200 text-gray-400"
+                    isFulfilled
+                      ? "bg-green-500 text-white"
+                      : "bg-gray-200 text-gray-400",
                   )}
                 >
-                  {isFulfilled ? <Check className="h-3 w-3" /> : <Truck className="h-3 w-3" />}
+                  {isFulfilled ? (
+                    <Check className="h-3 w-3" />
+                  ) : (
+                    <Truck className="h-3 w-3" />
+                  )}
                 </div>
                 <div>
-                  <h4 className="font-bold text-sm text-gray-800">Shipped & Fulfilled</h4>
+                  <h4 className="font-bold text-sm text-gray-800">
+                    Shipped & Fulfilled
+                  </h4>
                   <p className="text-xs text-muted-foreground font-light mt-0.5 leading-relaxed">
                     {isFulfilled
                       ? "Your fresh cones have been dispatched and delivered!"
@@ -232,11 +267,18 @@ export default async function OrderStatusPage({ params }: PageProps) {
 
           {/* WhatsApp Handoff Help Box */}
           <div className="bg-[#FAF6EE] rounded-3xl border border-[#E9DFD0] p-6 md:p-8 space-y-4">
-            <h3 className="font-serif text-xl font-medium text-gray-800">Confirm Order on WhatsApp</h3>
+            <h3 className="font-serif text-xl font-medium text-gray-800">
+              Confirm Order on WhatsApp
+            </h3>
             <p className="text-sm text-gray-600 font-light leading-relaxed">
-              To expedite shipping, please make sure you have shared your <strong>Order ID</strong> with Muskan on WhatsApp. You can also send receipt screenshots or discuss customizable cone options.
+              To expedite shipping, please make sure you have shared your{" "}
+              <strong>Order ID</strong> with Muskan on WhatsApp. You can also
+              send receipt screenshots or discuss customizable cone options.
             </p>
-            <Button asChild className="w-full bg-pink-500 hover:bg-pink-600 text-white font-semibold py-6 rounded-xl text-sm flex items-center justify-center gap-2 shadow-sm transition-all hover:scale-[1.005]">
+            <Button
+              asChild
+              className="w-full bg-pink-500 hover:bg-pink-600 text-white font-semibold py-6 rounded-xl text-sm flex items-center justify-center gap-2 shadow-sm transition-all hover:scale-[1.005]"
+            >
               <a href={contactUrl} target="_blank" rel="noopener noreferrer">
                 Message Muskan on WhatsApp
               </a>
@@ -264,14 +306,20 @@ export default async function OrderStatusPage({ params }: PageProps) {
             <div className="absolute inset-1 border-[0.5px] border-[#EBE4DC]/60 rounded-2xl pointer-events-none" />
 
             <h3 className="font-serif text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-[#EBE4DC]/60 flex items-center gap-2">
-              <ShoppingBag className="h-4.5 w-4.5 text-primary" /> Receipt Details
+              <ShoppingBag className="h-4.5 w-4.5 text-primary" /> Receipt
+              Details
             </h3>
 
             <div className="divide-y divide-[#EBE4DC]/40 space-y-3">
               {order.items.map((item) => (
-                <div key={item.id} className="flex justify-between items-start gap-4 pt-3 first:pt-0">
+                <div
+                  key={item.id}
+                  className="flex justify-between items-start gap-4 pt-3 first:pt-0"
+                >
                   <div className="min-w-0">
-                    <h4 className="font-semibold text-sm text-gray-800 truncate">{item.product.name}</h4>
+                    <h4 className="font-semibold text-sm text-gray-800 truncate">
+                      {item.product.name}
+                    </h4>
                     <p className="text-xs text-muted-foreground mt-0.5">
                       Qty: {item.quantity} × ₹{item.priceAtPurchase.toFixed(2)}
                     </p>
@@ -294,7 +342,9 @@ export default async function OrderStatusPage({ params }: PageProps) {
               </div>
               <div className="flex justify-between text-base font-bold text-gray-900 border-t border-[#EBE4DC]/40 pt-2 mt-2">
                 <span>Total Amount</span>
-                <span className="text-primary">₹{order.totalAmount.toFixed(2)}</span>
+                <span className="text-primary">
+                  ₹{order.totalAmount.toFixed(2)}
+                </span>
               </div>
             </div>
           </div>
@@ -308,28 +358,42 @@ export default async function OrderStatusPage({ params }: PageProps) {
               <div className="flex items-start gap-3">
                 <User className="h-4 w-4 text-muted-foreground mt-1 shrink-0" />
                 <div>
-                  <span className="text-xs text-muted-foreground block">Customer Name</span>
-                  <span className="font-medium text-gray-800">{order.customerName}</span>
+                  <span className="text-xs text-muted-foreground block">
+                    Customer Name
+                  </span>
+                  <span className="font-medium text-gray-800">
+                    {order.customerName}
+                  </span>
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <MapPin className="h-4 w-4 text-muted-foreground mt-1 shrink-0" />
                 <div>
-                  <span className="text-xs text-muted-foreground block">Delivery Address</span>
-                  <span className="font-medium text-gray-800 leading-relaxed block">{order.address}</span>
+                  <span className="text-xs text-muted-foreground block">
+                    Delivery Address
+                  </span>
+                  <span className="font-medium text-gray-800 leading-relaxed block">
+                    {order.address}
+                  </span>
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <Phone className="h-4 w-4 text-muted-foreground mt-1 shrink-0" />
                 <div>
-                  <span className="text-xs text-muted-foreground block">WhatsApp Number</span>
-                  <span className="font-medium text-gray-800">{order.phone}</span>
+                  <span className="text-xs text-muted-foreground block">
+                    WhatsApp Number
+                  </span>
+                  <span className="font-medium text-gray-800">
+                    {order.phone}
+                  </span>
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <Mail className="h-4 w-4 text-muted-foreground mt-1 shrink-0" />
                 <div>
-                  <span className="text-xs text-muted-foreground block">Email Address</span>
+                  <span className="text-xs text-muted-foreground block">
+                    Email Address
+                  </span>
                   <span className="font-medium text-gray-800 truncate block max-w-[200px]">
                     {order.email}
                   </span>
