@@ -1,6 +1,14 @@
 "use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { motion } from "framer-motion";
+import {
+  FadeIn,
+  StaggerContainer,
+  SectionHeader,
+  staggerItemVariants,
+} from "@/components/animations";
 
 interface GalleryItem {
   id: string;
@@ -36,62 +44,95 @@ const galleryItems: GalleryItem[] = [
   },
 ];
 
+const cardVariants = {
+  hidden: (i: number) => ({
+    opacity: 0,
+    y: 50 + (i % 2) * 20,
+    scale: 0.95,
+  }),
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      duration: 0.6,
+      delay: i * 0.12,
+      ease: [0.25, 0.46, 0.45, 0.94] as const,
+    },
+  }),
+};
+
 const Gallary = () => {
   return (
     <section className="w-full py-16">
-      <div className="mb-14 text-center">
-        <p className="text-sm uppercase tracking-[0.35em] text-primary/80 font-medium mb-4">
-          Gallery
-        </p>
-        <h2 className="text-4xl md:text-5xl lg:text-6xl font-morlana font-light mb-4">
-          Artistry in Every Stroke
-        </h2>
-        <p className="text-base md:text-lg text-foreground/70 font-light max-w-3xl mx-auto">
-          Browse our curated collection of mehendi designs, each styled with
-          rich detail, soft curves, and luxurious composition for every
-          celebration.
-        </p>
-      </div>
+      <SectionHeader
+        badge="Gallery"
+        title="Artistry in Every Stroke"
+        description="Browse our curated collection of mehendi designs, each styled with rich detail, soft curves, and luxurious composition for every celebration."
+        className="mb-14"
+      />
 
-      <div className="grid grid-cols-2 md:grid-cols-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-1">
         {galleryItems.map((item, index) => (
-          <article
+          <motion.article
             key={item.id}
-            className="group overflow-hidden  border border-border/60 bg-muted shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-2xl"
+            custom={index}
+            variants={cardVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+            className="group overflow-hidden border border-border/60 bg-muted shadow-sm cursor-pointer relative"
           >
             <div className="relative aspect-3/4 overflow-hidden bg-slate-100">
               <Image
                 src={item.imagePath}
                 alt={`Mehendi design by ${item.customerName}`}
                 fill
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                className="object-cover transition duration-500 group-hover:scale-105"
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                className="object-cover transition-all duration-700 group-hover:scale-110"
                 priority={index < 4}
               />
-              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-linear-to-t from-black/60 to-transparent" />
+              {/* Gradient overlay — deepens on hover */}
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/0 to-transparent opacity-60 transition-opacity duration-500 group-hover:opacity-90" />
+
+              {/* Hover overlay content */}
+              <div className="absolute inset-0 flex items-end p-5 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.25em] text-white/70 mb-1.5">
+                    {item.subtitle}
+                  </p>
+                  <h3 className="text-lg font-semibold text-white">
+                    {item.customerName}
+                  </h3>
+                </div>
+              </div>
             </div>
-            <div className="p-5">
-              <p className="text-xs uppercase tracking-[0.25em] text-foreground/60 mb-2">
+
+            {/* Static info below image — visible on mobile, hidden on hover-capable devices */}
+            <div className="p-4 md:p-5 md:group-hover:opacity-0 transition-opacity duration-300">
+              <p className="text-xs uppercase tracking-[0.25em] text-foreground/60 mb-1.5">
                 {item.subtitle}
               </p>
-              <h3 className="text-lg font-semibold text-foreground">
+              <h3 className="text-base md:text-lg font-semibold text-foreground">
                 {item.customerName}
               </h3>
             </div>
-          </article>
+          </motion.article>
         ))}
       </div>
 
-      <div className="mt-16 text-center">
-        <p className="text-lg text-foreground/70 font-light mb-6">
-          Want to see more designs or book your appointment?
-        </p>
-        <Link href="/gallery">
-          <button className="px-8 py-3 bg-primary text-primary-foreground rounded-md font-medium hover:bg-primary/90 transition-colors duration-300">
-            Explore More
-          </button>
-        </Link>
-      </div>
+      <FadeIn direction="up" delay={0.3}>
+        <div className="mt-14 md:mt-16 text-center">
+          <p className="text-lg text-foreground/70 font-light mb-6">
+            Want to see more designs or book your appointment?
+          </p>
+          <Link href="/gallery">
+            <button className="group/btn relative px-8 py-3 bg-primary text-primary-foreground rounded-full font-medium overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-primary/25 hover:scale-[1.03] active:scale-[0.97]">
+              <span className="relative z-10">Explore More</span>
+            </button>
+          </Link>
+        </div>
+      </FadeIn>
     </section>
   );
 };

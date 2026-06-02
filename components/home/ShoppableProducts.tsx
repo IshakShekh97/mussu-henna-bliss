@@ -4,8 +4,9 @@ import Link from "next/link";
 import ProductCard from "../shop/ProductCard";
 import { getProducts } from "@/app/actions/product.action";
 import { Flower } from "lucide-react";
+import { SectionHeader, GoldShimmer } from "@/components/animations";
 
-// Elegant loading skeleton matching the ProductCard design exactly to prevent layout shifts
+// Premium gold shimmer skeleton matching ProductCard design
 function ProductsSkeleton() {
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 md:gap-6 mb-12">
@@ -25,17 +26,17 @@ function ProductsSkeleton() {
             <Flower size={14} strokeWidth={1.5} />
           </div>
 
-          {/* Image Placeholder */}
-          <div className="relative rounded-lg overflow-hidden bg-gray-200/50 aspect-square mb-4 mt-2 mx-1 z-10 border border-[#EBE4DC]/30 animate-pulse" />
+          {/* Image Placeholder — gold shimmer */}
+          <GoldShimmer className="aspect-square mb-4 mt-2 mx-1 rounded-lg" />
 
           {/* Title Placeholder */}
-          <div className="h-5 bg-gray-200/60 rounded-md w-3/4 mx-auto mb-3 animate-pulse" />
+          <GoldShimmer className="h-5 w-3/4 mx-auto mb-3 rounded-md" />
 
           {/* Separator Line */}
-          <div className="h-0.5 bg-[#EBE4DC]/40 my-2 w-full animate-pulse" />
+          <GoldShimmer className="h-0.5 w-full my-2 rounded-full" />
 
           {/* Button Placeholder */}
-          <div className="h-9 bg-gray-200/50 rounded-md w-full mt-auto animate-pulse" />
+          <GoldShimmer className="h-9 w-full mt-auto rounded-md" />
         </div>
       ))}
     </div>
@@ -52,7 +53,8 @@ async function ShoppableProductsList() {
       <div className="text-center py-10 bg-[#FDFBF7] border border-[#EBE4DC] rounded-xl relative overflow-hidden mb-12">
         <div className="absolute inset-1.5 border-[0.5px] border-[#EBE4DC]/60 rounded-lg pointer-events-none z-0" />
         <p className="text-sm text-gray-500 font-light z-10 relative">
-          No premium henna products are available at this moment. Please check back soon!
+          No premium henna products are available at this moment. Please check
+          back soon!
         </p>
       </div>
     );
@@ -70,19 +72,12 @@ async function ShoppableProductsList() {
 const ShoppableProducts = () => {
   return (
     <section className="w-full py-16">
-      {/* Section Header */}
-      <div className="mb-14 text-center">
-        <h2 className="text-4xl md:text-5xl lg:text-6xl font-morlana font-light mb-4">
-          Premium
-          <span className="text-primary"> Henna </span>
-          Products
-        </h2>
-        <p className="text-base md:text-lg text-foreground/70 font-light max-w-3xl mx-auto">
-          Bring the magic of mehendi home with our carefully curated collection
-          of premium henna products. From bridal cones to practice kits, find
-          everything you need.
-        </p>
-      </div>
+      {/* Animated Section Header */}
+      <SectionHeader
+        title="Premium Henna Products"
+        highlightedWord="Henna"
+        description="Bring the magic of mehendi home with our carefully curated collection of premium henna products. From bridal cones to practice kits, find everything you need."
+      />
 
       {/* Products Grid with React Suspense */}
       <Suspense fallback={<ProductsSkeleton />}>
@@ -95,19 +90,21 @@ const ShoppableProducts = () => {
           Browse our complete collection of premium mehendi products and get
           ready to create magic!
         </p>
-        <div className="flex items-center justify-center gap-4">
-          <Button asChild size={"lg"} className="rounded px-8 py-3">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <Button
+            asChild
+            size={"lg"}
+            className="rounded-full px-8 py-3 transition-all duration-300 hover:shadow-lg hover:shadow-primary/25 hover:scale-[1.03] active:scale-[0.97] w-full sm:w-auto"
+          >
             <Link href={"/shop"}>View Full Shop</Link>
           </Button>
-          <Link href={"/book"}>
-            <Button
-              asChild
-              variant="outline"
-              className="rounded px-8 py-3 border border-primary bg-primary/5 hover:bg-primary/20"
-            >
-              Book Service
-            </Button>
-          </Link>
+          <Button
+            asChild
+            variant="outline"
+            className="rounded-full px-8 py-3 border border-primary bg-primary/5 hover:bg-primary/15 transition-all duration-300 hover:scale-[1.03] active:scale-[0.97] w-full sm:w-auto"
+          >
+            <Link href={"/book"}>Book Service</Link>
+          </Button>
         </div>
       </div>
     </section>
