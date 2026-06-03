@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { ShoppingBag } from "lucide-react";
 import { useCartStore } from "@/lib/cartStore";
+import { GoldShimmer } from "@/components/animations";
 
 export default function OrderSummary() {
   const [isMounted, setIsMounted] = useState(false);
@@ -15,11 +16,27 @@ export default function OrderSummary() {
 
   if (!isMounted) {
     return (
-      <div className="bg-[#FDFBF7] rounded-3xl border border-[#EBE4DC] p-6 relative overflow-hidden shadow-sm animate-pulse h-64">
-        <div className="h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
+      <div className="bg-[#FDFBF7] rounded-3xl border border-[#EBE4DC] p-6 relative overflow-hidden shadow-sm h-64 space-y-4">
+        <div className="absolute inset-1 border-[0.5px] border-[#EBE4DC]/60 rounded-2xl pointer-events-none" />
+        <div className="border-b border-[#EBE4DC]/60 pb-3 flex items-center gap-2">
+          <div className="h-4.5 w-4.5 bg-[#EBE4DC]/60 rounded-full shrink-0" />
+          <GoldShimmer className="h-5 w-1/3 rounded" />
+        </div>
         <div className="space-y-3">
-          <div className="h-10 bg-gray-200 rounded"></div>
-          <div className="h-10 bg-gray-200 rounded"></div>
+          <div className="flex gap-3 items-center">
+            <GoldShimmer className="h-10 w-10 rounded-lg shrink-0" />
+            <div className="space-y-1.5 flex-1">
+              <GoldShimmer className="h-4 w-3/4 rounded" />
+              <GoldShimmer className="h-3 w-1/4 rounded" />
+            </div>
+          </div>
+          <div className="flex gap-3 items-center">
+            <GoldShimmer className="h-10 w-10 rounded-lg shrink-0" />
+            <div className="space-y-1.5 flex-1">
+              <GoldShimmer className="h-4 w-1/2 rounded" />
+              <GoldShimmer className="h-3 w-1/4 rounded" />
+            </div>
+          </div>
         </div>
       </div>
     );

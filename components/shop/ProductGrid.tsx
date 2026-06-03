@@ -10,9 +10,12 @@ export default async function ProductGrid() {
       <div className="text-center py-16 bg-[#FDFBF7] border border-[#EBE4DC] rounded-2xl relative overflow-hidden">
         <div className="absolute inset-1.5 border-[0.5px] border-[#EBE4DC]/60 rounded-xl pointer-events-none z-0" />
         <div className="relative z-10 max-w-md mx-auto space-y-3 px-6">
-          <p className="text-lg text-gray-700 font-light font-serif">✨ No Products Available</p>
+          <p className="text-lg text-gray-700 font-light font-serif">
+            ✨ No Products Available
+          </p>
           <p className="text-xs text-muted-foreground font-light leading-relaxed">
-            Our products are currently being updated. Check back soon for fresh batches of organic henna cones and kits!
+            Our products are currently being updated. Check back soon for fresh
+            batches of organic henna cones and kits!
           </p>
         </div>
       </div>
@@ -25,3 +28,4 @@ export default async function ProductGrid() {
     </section>
   );
 }
+

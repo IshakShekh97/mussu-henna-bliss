@@ -5,13 +5,20 @@ import { Search, Plus, Edit2, Trash2, Eye, EyeOff, Package, AlertCircle, ImageIc
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell
+} from "@/components/ui/table";
 import { toggleProductStock, deleteProduct } from "@/app/actions/product.action";
 
 // Predefined list of products matched from server actions
@@ -221,133 +228,131 @@ export function ProductsList({ initialProducts }: ProductsListProps) {
           </Button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filteredProducts.map((product) => {
-            // Stock Badge calculation
-            let stockBadge = (
-              <Badge className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-3xs font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-md shadow-2xs">
-                In Stock ({product.stock})
-              </Badge>
-            );
-            if (product.stock === 0) {
-              stockBadge = (
-                <Badge className="bg-rose-50 text-rose-700 border border-rose-200 text-3xs font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-md shadow-2xs">
-                  Out of Stock
-                </Badge>
-              );
-            } else if (product.stock < 10) {
-              stockBadge = (
-                <Badge className="bg-amber-50 text-amber-700 border border-amber-200 text-3xs font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-md shadow-2xs flex items-center gap-0.5">
-                  <AlertCircle className="h-2.5 w-2.5 shrink-0" />
-                  Low Stock ({product.stock})
-                </Badge>
-              );
-            }
+        <div className="bg-[#FDFBF7] border border-[#EBE4DC] rounded-2xl shadow-sm overflow-hidden w-full">
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader className="bg-[#FAF6F0]/60 border-b border-[#EBE4DC]/60">
+                <TableRow className="hover:bg-transparent border-[#EBE4DC]/60">
+                  <TableHead className="text-xs font-bold text-[#8C7A6B] uppercase tracking-wider py-4 pl-6">Product</TableHead>
+                  <TableHead className="text-xs font-bold text-[#8C7A6B] uppercase tracking-wider py-4">Category</TableHead>
+                  <TableHead className="text-xs font-bold text-[#8C7A6B] uppercase tracking-wider py-4">Price</TableHead>
+                  <TableHead className="text-xs font-bold text-[#8C7A6B] uppercase tracking-wider py-4">Stock Status</TableHead>
+                  <TableHead className="text-xs font-bold text-[#8C7A6B] uppercase tracking-wider py-4">Live Storefront</TableHead>
+                  <TableHead className="text-xs font-bold text-[#8C7A6B] uppercase tracking-wider py-4 pr-6 text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredProducts.map((product) => {
+                  // Stock Badge calculation
+                  let stockBadge = (
+                    <Badge className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-3xs font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-md shadow-2xs">
+                      In Stock ({product.stock})
+                    </Badge>
+                  );
+                  if (product.stock === 0) {
+                    stockBadge = (
+                      <Badge className="bg-rose-50 text-rose-700 border border-rose-200 text-3xs font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-md shadow-2xs">
+                        Out of Stock
+                      </Badge>
+                    );
+                  } else if (product.stock < 10) {
+                    stockBadge = (
+                      <Badge className="bg-amber-50 text-amber-700 border border-amber-200 text-3xs font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-md shadow-2xs flex items-center gap-0.5">
+                        <AlertCircle className="h-2.5 w-2.5 shrink-0" />
+                        Low Stock ({product.stock})
+                      </Badge>
+                    );
+                  }
 
-            return (
-              <Card
-                key={product.id}
-                className="bg-[#FDFBF7] border-[#EBE4DC] shadow-xs hover:shadow-md transition-all duration-300 flex flex-col overflow-hidden group rounded-xl"
-              >
-                {/* Product Image Area */}
-                <div className="relative aspect-square w-full bg-[#FAF6F0] overflow-hidden border-b border-[#EBE4DC]/60">
-                  {product.imageUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={product.imageUrl}
-                      alt={product.name}
-                      className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                  ) : (
-                    <div className="h-full w-full flex flex-col items-center justify-center text-[#8C7A6B]/40">
-                      <ImageIcon className="h-10 w-10 stroke-1" />
-                      <span className="text-[10px] mt-1 font-semibold">No Preview Image</span>
-                    </div>
-                  )}
-
-                  {/* Stock Status Overlay Badge */}
-                  <div className="absolute top-2.5 right-2.5 z-10">
-                    {stockBadge}
-                  </div>
-
-                  {/* Live Status Overlay Badge */}
-                  <div className="absolute bottom-2.5 left-2.5 z-10 flex items-center gap-1 bg-[#4E3E2F]/80 backdrop-blur-xs text-[#FDFBF7] text-4xs font-bold uppercase tracking-wider px-2 py-0.5 rounded-md shadow-2xs">
-                    {product.inStock ? (
-                      <>
-                        <Eye className="h-3 w-3 shrink-0" />
-                        Live Check
-                      </>
-                    ) : (
-                      <>
-                        <EyeOff className="h-3 w-3 shrink-0" />
-                        Hidden
-                      </>
-                    )}
-                  </div>
-                </div>
-
-                {/* Details Group */}
-                <CardHeader className="p-4 pb-2 space-y-1">
-                  <div className="flex items-start justify-between gap-2">
-                    <h3 className="font-serif text-base font-bold text-[#4E3E2F] leading-snug line-clamp-1 group-hover:text-primary transition-colors">
-                      {product.name}
-                    </h3>
-                  </div>
-                  <span className="text-4xs text-muted-foreground uppercase tracking-widest font-extrabold block">
-                    {product.category}
-                  </span>
-                </CardHeader>
-
-                <CardContent className="p-4 pt-0 pb-3 flex-1 flex flex-col justify-between gap-3">
-                  <p className="text-[11.5px] text-muted-foreground line-clamp-2 leading-relaxed">
-                    {product.description || "No description provided for this product."}
-                  </p>
-                  
-                  <div className="flex items-baseline justify-between pt-1">
-                    <span className="text-[11px] font-semibold text-muted-foreground">Price</span>
-                    <span className="text-base font-bold text-primary">
-                      ₹{product.price.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
-                    </span>
-                  </div>
-                </CardContent>
-
-                {/* Actions Footer */}
-                <CardFooter className="border-t border-[#EBE4DC]/50 p-4 pt-3 flex items-center justify-between bg-[#FAF6F0]/20 gap-2 shrink-0">
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="xs"
-                      onClick={() => router.push(`/admin/products/${product.id}/edit`)}
-                      className="border-[#EBE4DC] text-[#4E3E2F] hover:bg-[#FAF6F0] rounded-md flex items-center gap-1 px-2.5 h-7 text-[11px]"
+                  return (
+                    <TableRow
+                      key={product.id}
+                      className="group border-[#EBE4DC]/40 hover:bg-[#FAF6F0]/30 transition-colors animate-fade-in"
                     >
-                      <Edit2 className="h-3 w-3 shrink-0" />
-                      Edit
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon-sm"
-                      onClick={() => handleDeleteProduct(product.id, product.name)}
-                      className="text-rose-600 hover:text-rose-700 hover:bg-rose-50 rounded-md size-7 flex items-center justify-center"
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </Button>
-                  </div>
+                      {/* Product Thumbnail & Name */}
+                      <TableCell className="py-4 pl-6">
+                        <div className="flex items-center gap-3">
+                          {product.imageUrl ? (
+                            <img
+                              src={product.imageUrl}
+                              alt={product.name}
+                              className="h-10 w-10 rounded-lg object-cover border border-[#EBE4DC]"
+                            />
+                          ) : (
+                            <div className="h-10 w-10 flex items-center justify-center rounded-lg border border-dashed border-[#EBE4DC] bg-[#FAF6F0] text-[#8C7A6B]/40">
+                              <ImageIcon className="h-4 w-4" />
+                            </div>
+                          )}
+                          <div className="flex flex-col gap-0.5">
+                            <span className="font-semibold text-xs text-[#4E3E2F]">
+                              {product.name}
+                            </span>
+                            <span className="text-[10px] text-muted-foreground line-clamp-1 max-w-[240px]" title={product.description}>
+                              {product.description || "No description"}
+                            </span>
+                          </div>
+                        </div>
+                      </TableCell>
 
-                  {/* Availability Toggle Switch */}
-                  <div className="flex items-center gap-2">
-                    <span className="text-4xs text-[#8C7A6B] font-bold uppercase tracking-wider">
-                      Live
-                    </span>
-                    <Switch
-                      checked={product.inStock}
-                      onCheckedChange={() => handleToggleStock(product.id, product.inStock)}
-                      className="scale-90"
-                    />
-                  </div>
-                </CardFooter>
-              </Card>
-            );
-          })}
+                      {/* Category */}
+                      <TableCell className="py-4 text-xs text-[#5C4D3E]">
+                        <span className="bg-[#FAF6F0] px-2 py-0.5 rounded border border-[#EBE4DC]/80 font-semibold uppercase text-[10px] tracking-wider">
+                          {product.category}
+                        </span>
+                      </TableCell>
+
+                      {/* Price */}
+                      <TableCell className="py-4 text-xs font-bold text-[#4E3E2F]">
+                        ₹{product.price.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+                      </TableCell>
+
+                      {/* Stock Badge */}
+                      <TableCell className="py-4 text-xs">
+                        {stockBadge}
+                      </TableCell>
+
+                      {/* Live Storefront Toggle Switch */}
+                      <TableCell className="py-4 text-xs">
+                        <div className="flex items-center gap-2">
+                          <Switch
+                            checked={product.inStock}
+                            onCheckedChange={() => handleToggleStock(product.id, product.inStock)}
+                            className="scale-90"
+                          />
+                          <span className="text-4xs text-[#8C7A6B] font-bold uppercase tracking-wider">
+                            {product.inStock ? "Live" : "Hidden"}
+                          </span>
+                        </div>
+                      </TableCell>
+
+                      {/* Actions */}
+                      <TableCell className="py-4 pr-6 text-right">
+                        <div className="flex justify-end gap-1.5">
+                          <Button
+                            variant="outline"
+                            size="xs"
+                            onClick={() => router.push(`/admin/products/${product.id}/edit`)}
+                            className="border-[#EBE4DC] text-[#4E3E2F] hover:bg-[#FAF6F0] rounded-md flex items-center gap-1 px-2.5 h-7 text-[11px]"
+                          >
+                            <Edit2 className="h-3 w-3 shrink-0" />
+                            Edit
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon-sm"
+                            onClick={() => handleDeleteProduct(product.id, product.name)}
+                            className="text-rose-600 hover:text-rose-700 hover:bg-rose-50 rounded-md size-7 flex items-center justify-center"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </div>
         </div>
       )}
 

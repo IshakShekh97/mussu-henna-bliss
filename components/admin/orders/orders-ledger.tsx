@@ -32,7 +32,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { OrderDetailsSheet } from "./order-details-sheet";
 import { getOrders } from "@/app/actions/order.action";
 
 interface OrderItemType {
@@ -68,8 +67,6 @@ export function OrdersLedger({ initialOrders }: OrdersLedgerProps) {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [paymentFilter, setPaymentFilter] = useState("ALL");
-  const [selectedOrder, setSelectedOrder] = useState<OrderType | null>(null);
-  const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
 
   // Refresh data from database
@@ -324,8 +321,7 @@ export function OrdersLedger({ initialOrders }: OrdersLedgerProps) {
                   <TableRow
                     key={order.id}
                     onClick={() => {
-                      setSelectedOrder(order);
-                      setIsSheetOpen(true);
+                      router.push(`/admin/orders/${order.id}`);
                     }}
                     className="group border-[#EBE4DC]/40 hover:bg-[#FAF6F0]/30 cursor-pointer transition-colors"
                   >
@@ -389,21 +385,6 @@ export function OrdersLedger({ initialOrders }: OrdersLedgerProps) {
         </Table>
       </div>
 
-      {/* Slide-out Sheet details panel */}
-      {selectedOrder && (
-        <OrderDetailsSheet
-          order={selectedOrder}
-          isOpen={isSheetOpen}
-          onClose={() => {
-            setIsSheetOpen(false);
-            setSelectedOrder(null);
-          }}
-          onOrderUpdated={() => {
-            // Hot update order details without reloading entire page if possible
-            handleRefresh();
-          }}
-        />
-      )}
     </div>
   );
 }

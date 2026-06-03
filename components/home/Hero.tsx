@@ -30,14 +30,14 @@ const heroImageVariants = {
 const Hero = () => {
   return (
     <main className="relative">
-      <section className="w-full overflow-hidden grid grid-cols-1 lg:grid-cols-5 items-center gap-10 min-h-[calc(100vh-8rem)]">
+      <section className="w-full overflow-hidden grid grid-cols-1 lg:grid-cols-5 items-center gap-8 lg:gap-10 lg:min-h-[calc(100vh-8rem)]">
         {/* Left Column */}
-        <div className="w-full h-full flex flex-col items-start justify-center col-span-1 lg:col-span-2">
+        <div className="w-full h-full flex flex-col items-center lg:items-start justify-center col-span-1 lg:col-span-2">
           {/* Top Heading */}
           <FadeIn direction="up" delay={0} duration={0.7}>
             <div className="text-lg font-light mb-5 ml-3 font-serif w-full max-lg:text-center">
-              ✨ Pure Elegance,{" "}
-              <span className="text-primary">Timeless</span> Beauty
+              ✨ Pure Elegance, <span className="text-primary">Timeless</span>{" "}
+              Beauty
             </div>
           </FadeIn>
 
@@ -64,7 +64,7 @@ const Hero = () => {
 
           {/* CTA Buttons */}
           <FadeIn direction="up" delay={0.8} duration={0.7}>
-            <div className="flex items-center justify-center gap-3 mt-7 max-lg:w-full">
+            <div className="flex items-center justify-center gap-3 mt-7">
               <MagneticButton>
                 <Button
                   size={"lg"}
@@ -87,14 +87,14 @@ const Hero = () => {
         </div>
 
         {/* Right Column — staggered hero images */}
-        <div className="h-full w-full flex items-center justify-center col-span-1 lg:col-span-3 gap-4 sm:gap-6">
+        <div className="w-full flex items-center justify-center col-span-1 lg:col-span-3 gap-4 sm:gap-6 lg:max-h-[calc(100vh-10rem)]">
           {/* Left image */}
           <motion.div
             custom={1}
             variants={heroImageVariants}
             initial="hidden"
             animate="visible"
-            className="relative h-[75%] max-sm:h-[75%] lg:w-[24%] md:h-100 md:w-[23%] w-[35%] rounded-[25rem] overflow-hidden group"
+            className="relative aspect-2/3 lg:w-[24%] md:w-[23%] w-[35%] rounded-[25rem] overflow-hidden group"
           >
             <Image
               src={"/images/hero-2.jpg"}
@@ -111,7 +111,7 @@ const Hero = () => {
             variants={heroImageVariants}
             initial="hidden"
             animate="visible"
-            className="relative lg:h-full lg:w-[34%] md:h-120 md:w-[28%] h-80 max-sm:h-88 w-[42%] rounded-[25rem] overflow-hidden border-2 border-primary group animate-pulse-glow"
+            className="relative aspect-2/3.5 lg:w-[34%] md:w-[28%] w-[42%] rounded-[25rem] overflow-hidden border-2 border-primary group animate-pulse-glow"
           >
             <Image
               src={"/images/hero-1.jpg"}
@@ -129,7 +129,7 @@ const Hero = () => {
             variants={heroImageVariants}
             initial="hidden"
             animate="visible"
-            className="relative hidden md:block h-[75%] lg:w-[24%] md:h-100 md:w-[23%] w-[18%] rounded-[25rem] overflow-hidden group"
+            className="relative hidden md:block aspect-2/3 lg:w-[24%] md:w-[23%] w-[18%] rounded-[25rem] overflow-hidden group"
           >
             <Image
               src={"/images/hero-3.jpg"}

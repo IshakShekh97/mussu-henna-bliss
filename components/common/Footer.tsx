@@ -333,18 +333,18 @@ const Footer = () => {
           <div className="flex flex-col items-center sm:items-start gap-2">
             <div className="flex flex-wrap justify-center sm:justify-start gap-x-5 gap-y-1">
               <a
-                href={`mailto:${process.env.SMTP_USER}`}
+                href={`mailto:muskanmallick153@gmail.com`}
                 className="flex items-center gap-1.5 hover:text-[#C5A880] transition-colors"
               >
                 <Mail className="w-3.5 h-3.5" />
-                <span>{process.env.SMTP_USER}</span>
+                <span>muskanmallick153@gmail.com</span>
               </a>
               <a
-                href="https://wa.me/1234567890"
+                href="https://wa.me/916290665156"
                 className="flex items-center gap-1.5 hover:text-[#C5A880] transition-colors"
               >
                 <Phone className="w-3.5 h-3.5" />
-                <span>+1 (234) 567-8900</span>
+                <span>+91 6290665156</span>
               </a>
             </div>
             <p className="text-center sm:text-left mt-1 text-[#FAF6F0]/50">

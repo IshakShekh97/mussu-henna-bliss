@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Loader2, ArrowRight } from "lucide-react";
+import { GoldShimmer } from "@/components/animations";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -106,13 +107,24 @@ export default function CheckoutForm() {
 
   if (!isMounted) {
     return (
-      <div className="bg-[#FDFBF7] rounded-3xl border border-[#EBE4DC] p-6 relative overflow-hidden shadow-sm animate-pulse h-[340px]">
-        <div className="h-6 bg-gray-200 rounded w-1/4 mb-6"></div>
+      <div className="bg-[#FDFBF7] rounded-3xl border border-[#EBE4DC] p-6 relative overflow-hidden shadow-sm h-[400px] space-y-6">
+        <div className="absolute inset-1.5 border-[0.5px] border-[#EBE4DC]/60 rounded-2xl pointer-events-none" />
+        <div className="flex items-center justify-between pb-3 border-b border-[#EBE4DC]/60">
+          <GoldShimmer className="h-6 w-1/3 rounded-lg" />
+        </div>
         <div className="space-y-4">
-          <div className="h-12 bg-gray-200 rounded"></div>
-          <div className="h-12 bg-gray-200 rounded"></div>
-          <div className="h-12 bg-gray-200 rounded"></div>
-          <div className="h-12 bg-gray-200 rounded"></div>
+          <div className="space-y-2">
+            <GoldShimmer className="h-4 w-16 rounded" />
+            <GoldShimmer className="h-10 w-full rounded-lg" />
+          </div>
+          <div className="space-y-2">
+            <GoldShimmer className="h-4 w-28 rounded" />
+            <GoldShimmer className="h-10 w-full rounded-lg" />
+          </div>
+          <div className="space-y-2">
+            <GoldShimmer className="h-4 w-24 rounded" />
+            <GoldShimmer className="h-10 w-full rounded-lg" />
+          </div>
         </div>
       </div>
     );

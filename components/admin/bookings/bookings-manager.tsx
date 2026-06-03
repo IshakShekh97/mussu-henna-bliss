@@ -7,7 +7,7 @@ import React, {
   useEffect,
 } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, Mail } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -20,13 +20,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { updateBookingStatus } from "@/app/actions/booking.action";
+import { updateBookingStatus, sendBookingEmailAction } from "@/app/actions/booking.action";
 
-import { PipelineView } from "./pipeline-view";
 import { CalendarView } from "./calendar-view";
-import { ViewBookingDialog } from "./view-booking-dialog";
+import { BookingsTable } from "./bookings-table";
 import { DeleteBookingDialog } from "./delete-booking-dialog";
-import { HandoffDialog } from "./handoff-dialog";
 import { Booking } from "@/lib/zodSchemas";
 import { getStatusLabel } from "@/lib/utils";
 
@@ -37,25 +35,16 @@ interface BookingsManagerProps {
 export function BookingsManager({ initialBookings }: BookingsManagerProps) {
   const router = useRouter();
   const [bookings, setBookings] = useState<Booking[]>(initialBookings);
-  const [selectedBookingId, setSelectedBookingId] = useState<string | null>(
-    initialBookings.length > 0 ? initialBookings[0].id : null,
-  );
 
   // Tabs states
-  const [viewTab, setViewTab] = useState<string>("pipeline"); // pipeline | calendar
+  const [viewTab, setViewTab] = useState<string>("table"); // table | calendar
   const [filterTab, setFilterTab] = useState<string>("all"); // all | requested | quoted | accepted | completed | cancelled
 
   // Search & Sorting states
   const [search, setSearch] = useState("");
   const [sortOption, setSortOption] = useState("eventDate-asc");
 
-  // Dialog / Modal states
-  const [handoffOpen, setHandoffOpen] = useState(false);
-  const [generatedLink, setGeneratedLink] = useState("");
-  const [generatedBookingId, setGeneratedBookingId] = useState("");
-
   // View, Edit, Delete Dialog States
-  const [viewDialogOpen, setViewDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [bookingToDeleteId, setBookingToDeleteId] = useState<string | null>(
     null,
@@ -63,6 +52,65 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
 
   // Transition & Server Action States
   const [isPending, startTransition] = useTransition();
+
+  // Send email states
+  const [emailDialogOpen, setEmailDialogOpen] = useState(false);
+  const [emailSubject, setEmailSubject] = useState("");
+  const [emailBody, setEmailBody] = useState("");
+  const [emailBooking, setEmailBooking] = useState<Booking | null>(null);
+
+  const handleOpenEmailDialog = (b: Booking) => {
+    setEmailBooking(b);
+    let subject = `Mussu's Henna Bliss: Booking Update`;
+    const dateStr = new Date(b.eventDate).toLocaleDateString("en-IN", { dateStyle: "long" });
+    const timeStr = new Date(b.eventDate).toLocaleTimeString("en-IN", { hour: '2-digit', minute: '2-digit' });
+    let body = `Hi ${b.customerName},\n\nHere is an update regarding your henna booking.\n\nBooking ID: ${b.id}\nStatus: ${getStatusLabel(b.status)}\n\nTrack status: ${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/status/booking-${b.id}\n\nBest regards,\nMuskan`;
+
+    if (b.status === "PENDING_QUOTE") {
+      subject = `Mussu's Henna Bliss: Booking Request Received!`;
+      body = `Hi ${b.customerName},\n\nWe have received your henna booking request for the occasion of ${b.eventType} on ${dateStr}.\n\nMuskan is currently reviewing your design notes and will propose a custom quote shortly.\n\nTrack status: ${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/status/booking-${b.id}\n\nBest regards,\nMuskan`;
+    } else if (b.status === "QUOTED") {
+      subject = `Mussu's Henna Bliss: Custom Quote Proposed!`;
+      body = `Hi ${b.customerName},\n\nWe have reviewed your request for ${b.eventType} on ${dateStr} at ${timeStr}.\n\nCustom Quote Proposed: ₹${b.quotedPrice || 0}\n\nArtist Notes: ${b.artistNotes || 'N/A'}\n\nPlease review the quote. You can track status and request revisions here: ${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/status/booking-${b.id}\n\nBest regards,\nMuskan`;
+    } else if (b.status === "ACCEPTED") {
+      subject = `Mussu's Henna Bliss: Booking Confirmed! 🎉`;
+      body = `Hi ${b.customerName},\n\nGreat news! Your booking for ${b.eventType} on ${dateStr} is officially confirmed and locked in our schedule!\n\nEvent Location: ${b.location}\nEstimated Guests: ${b.guestCount || 'N/A'}\n\nTrack details: ${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/status/booking-${b.id}\n\nBest regards,\nMuskan`;
+    } else if (b.status === "COMPLETED") {
+      subject = `Mussu's Henna Bliss: Thank You! 💖`;
+      body = `Hi ${b.customerName},\n\nThank you for choosing Mussu's Henna Bliss! We had a wonderful time styling your henna for ${b.eventType}.\n\nWe hope you loved the results! Feel free to share your reviews or photo tags with us.\n\nBest regards,\nMuskan`;
+    } else if (b.status === "CANCELLED") {
+      subject = `Mussu's Henna Bliss: Booking Cancellation`;
+      body = `Hi ${b.customerName},\n\nThis email is to notify you that your booking for ${b.eventType} on ${dateStr} has been cancelled.\n\nIf you have any questions or think this was a mistake, please reach out to us directly on WhatsApp.\n\nBest regards,\nMuskan`;
+    }
+
+    setEmailSubject(subject);
+    setEmailBody(body);
+    setEmailDialogOpen(true);
+  };
+
+  const handleSendEmailSubmit = () => {
+    if (!emailBooking) return;
+    if (!emailSubject.trim()) {
+      toast.error("Subject is required.");
+      return;
+    }
+    if (!emailBody.trim()) {
+      toast.error("Email body is required.");
+      return;
+    }
+
+    startTransition(async () => {
+      const formattedBody = emailBody.replace(/\n/g, "<br/>");
+      const res = await sendBookingEmailAction(emailBooking.id, emailSubject, formattedBody);
+      if (res.success) {
+        toast.success("Email sent successfully!");
+        setEmailDialogOpen(false);
+        setEmailBooking(null);
+      } else {
+        toast.error(res.error || "Failed to send email");
+      }
+    });
+  };
 
   // Optimistic UI updates state
   const [optimisticBookings, setOptimisticBookings] = useOptimistic(
@@ -99,14 +147,7 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
   // Sync state if initialBookings updates
   useEffect(() => {
     setBookings(initialBookings);
-    if (initialBookings.length > 0 && !selectedBookingId) {
-      setSelectedBookingId(initialBookings[0].id);
-    }
-  }, [initialBookings, selectedBookingId]);
-
-  // Selected Booking Details resolver
-  const selectedBooking =
-    optimisticBookings.find((b) => b.id === selectedBookingId) || null;
+  }, [initialBookings]);
 
   // -----------------------------------------
   // Filtering & Sorting Logic
@@ -155,8 +196,7 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
   // Dialog Open Helpers
   // -----------------------------------------
   const handleOpenView = (booking: Booking) => {
-    setSelectedBookingId(booking.id);
-    setViewDialogOpen(true);
+    router.push(`/admin/bookings/${booking.id}`);
   };
 
   const handleOpenEdit = (booking: Booking) => {
@@ -190,13 +230,6 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
     });
   };
 
-  const handleQuoteSuccess = (link: string, bookingId: string) => {
-    setGeneratedLink(link);
-    setGeneratedBookingId(bookingId);
-    setViewDialogOpen(false);
-    setHandoffOpen(true);
-  };
-
   return (
     <div className="space-y-6 font-sans">
       {/* 📝 SECTION A: Control Top Bar - Redesigned full width tabs */}
@@ -204,10 +237,10 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
         <Tabs value={viewTab} onValueChange={setViewTab} className="w-full">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger
-              value="pipeline"
+              value="table"
               className="rounded-lg text-sm font-semibold py-2.5 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-xs text-muted-foreground select-none cursor-pointer"
             >
-              Pipeline List View
+              Table View
             </TabsTrigger>
             <TabsTrigger
               value="calendar"
@@ -308,45 +341,20 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
         </div>
       </div>
 
-      {/* 🎨 DUAL-VIEW SPLIT LAYOUT */}
-      {viewTab === "pipeline" ? (
-        <PipelineView
+      {/* 🎨 MULTI-VIEW SPLIT LAYOUT */}
+      {viewTab === "table" ? (
+        <BookingsTable
           bookings={filteredBookings}
           onView={handleOpenView}
           onEdit={handleOpenEdit}
           onDelete={handleOpenDelete}
-          onStatusChange={handleStatusChangeFromCard}
-          isPending={isPending}
-          onClearFilters={() => {
-            setSearch("");
-            setFilterTab("all");
-          }}
-          isFiltered={search !== "" || filterTab !== "all"}
+          onSendEmail={handleOpenEmailDialog}
         />
       ) : (
         <CalendarView bookings={filteredBookings} onView={handleOpenView} />
       )}
 
       {/* 🛠️ INTERACTIVE MECHANICS DIALOGS */}
-
-      {/* Detail Dialog */}
-      <ViewBookingDialog
-        open={viewDialogOpen}
-        onOpenChange={setViewDialogOpen}
-        booking={selectedBooking}
-        onOpenEdit={handleOpenEdit}
-        onStatusChangeOptimistic={(bookingId, status, price, time) => {
-          setOptimisticBookings({
-            bookingId,
-            nextStatus: status,
-            nextPrice: price,
-            nextTime: time,
-          });
-        }}
-        onQuoteSuccess={handleQuoteSuccess}
-      />
-
-
 
       {/* Delete Confirmation Dialog */}
       <DeleteBookingDialog
@@ -355,19 +363,93 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
         bookingId={bookingToDeleteId}
         onSuccess={(deletedId) => {
           setBookingToDeleteId(null);
-          setSelectedBookingId(
-            bookings.find((b) => b.id !== deletedId)?.id || null,
-          );
+          setBookings(prev => prev.filter((b) => b.id !== deletedId));
         }}
       />
 
-      {/* 🎉 Handoff Quote Generated Success Dialog */}
-      <HandoffDialog
-        open={handoffOpen}
-        onOpenChange={setHandoffOpen}
-        generatedLink={generatedLink}
-        booking={selectedBooking}
-      />
+      {/* Custom Send Email Dialog Modal for Cards */}
+      {emailDialogOpen && emailBooking && (
+        <div className="fixed inset-0 z-150 flex items-center justify-center bg-black/40 backdrop-blur-xs font-sans">
+          <div className="bg-[#FDFBF7] border border-[#EBE4DC] rounded-3xl p-6 max-w-md w-full mx-4 shadow-xl space-y-4 relative overflow-hidden animate-in fade-in-50 zoom-in-95 text-left">
+            <div className="absolute inset-1 border-[0.5px] border-[#EBE4DC]/60 rounded-2xl pointer-events-none" />
+
+            <h3 className="font-serif text-lg font-bold text-[#4E3E2F] border-b border-[#EBE4DC]/60 pb-2">
+              Send Status Email
+            </h3>
+
+            <div className="space-y-3 text-xs">
+              <div>
+                <span className="text-[10px] text-muted-foreground block font-semibold">
+                  Current Booking Status
+                </span>
+                <span className="font-bold text-[#4E3E2F] uppercase text-3xs bg-[#FAF6F0] px-2 py-0.5 rounded border border-[#EBE4DC] inline-block mt-0.5">
+                  {getStatusLabel(emailBooking.status)}
+                </span>
+              </div>
+
+              <div>
+                <span className="text-[10px] text-muted-foreground block font-semibold">
+                  Recipient
+                </span>
+                <span className="font-semibold text-[#4E3E2F]">
+                  {emailBooking.email}
+                </span>
+              </div>
+
+              <div className="space-y-1">
+                <label htmlFor="cardEmailSubject" className="text-[10px] font-semibold text-muted-foreground block">
+                  Email Subject
+                </label>
+                <input
+                  id="cardEmailSubject"
+                  type="text"
+                  value={emailSubject}
+                  onChange={(e) => setEmailSubject(e.target.value)}
+                  disabled={isPending}
+                  className="w-full p-2 text-xs rounded-lg border border-[#EBE4DC] bg-white outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/10 transition-all text-[#4E3E2F] font-semibold"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label htmlFor="cardEmailBody" className="text-[10px] font-semibold text-muted-foreground block">
+                  Email Content
+                </label>
+                <textarea
+                  id="cardEmailBody"
+                  rows={8}
+                  value={emailBody}
+                  onChange={(e) => setEmailBody(e.target.value)}
+                  disabled={isPending}
+                  className="w-full p-3 text-xs rounded-lg border border-[#EBE4DC] bg-white outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/10 transition-all text-[#4E3E2F] leading-relaxed resize-y font-mono font-medium"
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-3 pt-2">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setEmailDialogOpen(false);
+                  setEmailSubject("");
+                  setEmailBody("");
+                  setEmailBooking(null);
+                }}
+                disabled={isPending}
+                className="flex-1 border-[#EBE4DC] text-[#4E3E2F] rounded-lg text-xs cursor-pointer"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleSendEmailSubmit}
+                disabled={isPending}
+                className="flex-1 bg-primary hover:bg-primary/95 text-primary-foreground rounded-lg text-xs cursor-pointer"
+              >
+                {isPending ? "Sending..." : "Confirm & Send"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

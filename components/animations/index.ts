@@ -6,3 +6,4 @@ export { default as MagneticButton } from "./MagneticButton";
 export { default as ParallaxImage } from "./ParallaxImage";
 export { default as GoldShimmer } from "./GoldShimmer";
 export { default as SectionHeader } from "./SectionHeader";
+export { default as PageHeader } from "./PageHeader";

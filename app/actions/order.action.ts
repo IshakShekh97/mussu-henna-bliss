@@ -4,6 +4,7 @@ import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { updateOrderSchema, type updateOrderSchemaType, manualOrderCreateSchema, type manualOrderCreateSchemaType } from "@/lib/zodSchemas";
 import nodemailer from "nodemailer";
+import { sendEmail } from "@/lib/email";
 
 /**
  * Fetches all orders, including items and product details.
@@ -348,6 +349,228 @@ export async function createManualOrder(data: manualOrderCreateSchemaType) {
       success: false,
       error: error.message || "Failed to log manual order",
     };
+  }
+}
+
+/**
+ * Cancels an order, updates database status, increments product stock levels back,
+ * and sends an email notification to the customer with cancelled details.
+ */
+export async function cancelOrderAction(orderId: string, cause: string) {
+  try {
+    if (!orderId) {
+      return { success: false, error: "Order ID is required" };
+    }
+    if (!cause.trim()) {
+      return { success: false, error: "Cancellation reason is required" };
+    }
+
+    const order = await prisma.order.findUnique({
+      where: { id: orderId },
+      include: {
+        items: {
+          include: {
+            product: true,
+          },
+        },
+      },
+    });
+
+    if (!order) {
+      return { success: false, error: "Order not found" };
+    }
+
+    if (order.status === "CANCELLED") {
+      return { success: false, error: "Order is already cancelled" };
+    }
+
+    // Run transaction: update status to CANCELLED and restore stock
+    await prisma.$transaction(async (tx) => {
+      await tx.order.update({
+        where: { id: orderId },
+        data: { status: "CANCELLED" },
+      });
+
+      for (const item of order.items) {
+        await tx.product.update({
+          where: { id: item.productId },
+          data: {
+            stock: {
+              increment: item.quantity,
+            },
+          },
+        });
+      }
+    });
+
+    revalidatePath("/admin/orders");
+    revalidatePath("/admin");
+
+    // Format items rows HTML
+    const itemsRowsHtml = order.items
+      .map(
+        (item) => `
+        <tr>
+          <td style="padding: 12px; border-bottom: 1px solid #EBE4DC; font-size: 14px; color: #4E3E2F;">
+            <strong>${item.product.name}</strong>
+          </td>
+          <td style="padding: 12px; border-bottom: 1px solid #EBE4DC; font-size: 14px; color: #4E3E2F; text-align: center;">
+            ${item.quantity}
+          </td>
+          <td style="padding: 12px; border-bottom: 1px solid #EBE4DC; font-size: 14px; color: #4E3E2F; text-align: right;">
+            ₹${item.priceAtPurchase.toFixed(2)}
+          </td>
+          <td style="padding: 12px; border-bottom: 1px solid #EBE4DC; font-size: 14px; color: #4E3E2F; text-align: right; font-weight: bold;">
+            ₹${(item.quantity * item.priceAtPurchase).toFixed(2)}
+          </td>
+        </tr>
+      `
+      )
+      .join("");
+
+    const emailHtml = `
+      <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #FAF6F0; padding: 30px; margin: 0; min-height: 100%;">
+        <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #FDFBF7; border: 1px solid #EBE4DC; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 10px rgba(78, 62, 47, 0.05);">
+          <!-- Header -->
+          <tr>
+            <td style="background-color: #7A2E2E; padding: 24px; text-align: center; color: #FDFBF7;">
+              <h1 style="margin: 0; font-size: 24px; font-weight: 300; letter-spacing: 1px;">Mussu's Henna Bliss</h1>
+              <p style="margin: 5px 0 0 0; font-size: 12px; color: #FAF6F0; font-weight: 200;">Order Cancellation Notice</p>
+            </td>
+          </tr>
+          <!-- Content Body -->
+          <tr>
+            <td style="padding: 30px;">
+              <h2 style="margin-top: 0; font-size: 18px; color: #7A2E2E; font-weight: bold; border-bottom: 1px solid #EBE4DC; padding-bottom: 10px;">Order Cancelled</h2>
+              <p style="font-size: 14px; color: #5C4D3E; line-height: 1.6; margin-bottom: 20px;">
+                Hi <strong>${order.customerName}</strong>,<br/>
+                We regret to inform you that your order has been cancelled. Below are the details regarding the cancellation:
+              </p>
+              
+              <div style="background-color: #FAF6F0; border-left: 4px solid #7A2E2E; padding: 15px; margin-bottom: 25px; border-radius: 8px; font-size: 14px; color: #5C4D3E; border-top: 1px solid #EBE4DC; border-right: 1px solid #EBE4DC; border-bottom: 1px solid #EBE4DC;">
+                <strong>Reason for Cancellation:</strong><br/>
+                <span style="font-style: italic;">${cause}</span>
+              </div>
+              
+              <table width="100%" style="margin-bottom: 25px; font-size: 13px; color: #8C7A6B;">
+                <tr>
+                  <td style="padding-bottom: 5px; width: 120px;"><strong>Order ID:</strong></td>
+                  <td style="padding-bottom: 5px; font-family: monospace;">${order.id}</td>
+                </tr>
+                <tr>
+                  <td style="padding-bottom: 5px;"><strong>Cancellation Date:</strong></td>
+                  <td style="padding-bottom: 5px;">${new Date().toLocaleDateString("en-IN", { dateStyle: "long" })}</td>
+                </tr>
+              </table>
+
+              <h3 style="font-size: 14px; color: #4E3E2F; font-weight: bold; margin-bottom: 10px;">Cancelled Items</h3>
+              <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse: collapse; margin-bottom: 25px;">
+                <thead>
+                  <tr style="background-color: #FAF6F0;">
+                    <th style="padding: 10px 12px; border-bottom: 2px solid #EBE4DC; text-align: left; font-size: 12px; text-transform: uppercase; color: #8C7A6B;">Product</th>
+                    <th style="padding: 10px 12px; border-bottom: 2px solid #EBE4DC; text-align: center; font-size: 12px; text-transform: uppercase; color: #8C7A6B;">Qty</th>
+                    <th style="padding: 10px 12px; border-bottom: 2px solid #EBE4DC; text-align: right; font-size: 12px; text-transform: uppercase; color: #8C7A6B;">Price</th>
+                    <th style="padding: 10px 12px; border-bottom: 2px solid #EBE4DC; text-align: right; font-size: 12px; text-transform: uppercase; color: #8C7A6B;">Subtotal</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${itemsRowsHtml}
+                </tbody>
+                <tfoot>
+                  <tr style="border-top: 2px solid #EBE4DC;">
+                    <td colspan="3" style="padding: 12px; text-align: right; font-size: 16px; font-weight: bold; color: #4E3E2F;">Cancelled Total Amount:</td>
+                    <td style="padding: 12px; text-align: right; font-size: 16px; font-weight: bold; color: #4E3E2F;">₹${order.totalAmount.toFixed(2)}</td>
+                  </tr>
+                </tfoot>
+              </table>
+              
+              <p style="font-size: 13px; color: #8C7A6B; line-height: 1.5; text-align: center; margin-top: 30px; border-top: 1px solid #EBE4DC; padding-top: 15px;">
+                We apologize for any inconvenience caused. If you believe this is a mistake, or wish to arrange an alternative product, please feel free to reach out to Muskan on WhatsApp.
+              </p>
+            </td>
+          </tr>
+        </table>
+      </div>
+    `;
+
+    await sendEmail({
+      to: order.email,
+      subject: `Order Cancellation Notice: #${order.id.slice(0, 8).toUpperCase()}`,
+      html: emailHtml,
+    });
+
+    return { success: true };
+  } catch (error: any) {
+    console.error("Failed to cancel order:", error);
+    return { success: false, error: error.message || "Failed to cancel order" };
+  }
+}
+
+/**
+ * Sends a custom email notification regarding an order.
+ */
+export async function sendOrderEmailAction(
+  orderId: string,
+  subject: string,
+  bodyHtml: string
+) {
+  try {
+    if (!orderId) {
+      return { success: false, error: "Order ID is required" };
+    }
+    if (!subject.trim()) {
+      return { success: false, error: "Subject is required" };
+    }
+    if (!bodyHtml.trim()) {
+      return { success: false, error: "Email body is required" };
+    }
+
+    const order = await prisma.order.findUnique({
+      where: { id: orderId },
+    });
+
+    if (!order) {
+      return { success: false, error: "Order not found" };
+    }
+
+    const styledEmailHtml = `
+      <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #FAF6F0; padding: 30px; margin: 0; min-height: 100%;">
+        <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #FDFBF7; border: 1px solid #EBE4DC; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 10px rgba(78, 62, 47, 0.05);">
+          <!-- Header -->
+          <tr>
+            <td style="background-color: #4E3E2F; padding: 24px; text-align: center; color: #FDFBF7;">
+              <h1 style="margin: 0; font-size: 24px; font-weight: 300; letter-spacing: 1px;">Mussu's Henna Bliss</h1>
+              <p style="margin: 5px 0 0 0; font-size: 12px; color: #FAF6F0; font-weight: 200;">Order Update</p>
+            </td>
+          </tr>
+          <!-- Content Body -->
+          <tr>
+            <td style="padding: 30px; font-size: 14px; color: #5C4D3E; line-height: 1.6;">
+              ${bodyHtml}
+              
+              <p style="font-size: 11px; color: #8C7A6B; line-height: 1.5; text-align: center; margin-top: 30px; border-top: 1px solid #EBE4DC; padding-top: 15px;">
+                This email was sent from Muskan at Mussu's Henna Bliss. If you have any questions, you can directly reply to this email.
+              </p>
+            </td>
+          </tr>
+        </table>
+      </div>
+    `;
+
+    const res = await sendEmail({
+      to: order.email,
+      subject,
+      html: styledEmailHtml,
+    });
+
+    if (res.success) {
+      return { success: true };
+    } else {
+      return { success: false, error: res.error || "Failed to transmit email" };
+    }
+  } catch (error: any) {
+    console.error("Failed to send order email:", error);
+    return { success: false, error: error.message || "Failed to send email" };
   }
 }
 

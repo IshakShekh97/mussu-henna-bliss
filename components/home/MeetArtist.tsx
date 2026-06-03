@@ -46,13 +46,15 @@ const values = [
 ];
 
 const imageRevealVariants = {
-  hidden: { clipPath: "circle(0% at 50% 50%)", opacity: 0 },
+  hidden: { clipPath: "circle(1% at 50% 50%)", opacity: 0, scale: 0.95 },
   visible: {
-    clipPath: "circle(75% at 50% 50%)",
+    clipPath: "circle(100% at 50% 50%)",
     opacity: 1,
+    scale: 1,
     transition: {
       clipPath: { duration: 1.2, ease: [0.25, 0.46, 0.45, 0.94] as const },
-      opacity: { duration: 0.3 },
+      opacity: { duration: 0.5 },
+      scale: { duration: 1.2, ease: [0.25, 0.46, 0.45, 0.94] as const },
     },
   },
 };
@@ -75,7 +77,7 @@ const MeetArtist = () => {
           variants={imageRevealVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.3 }}
+          viewport={{ once: true, amount: 0.1 }}
           className="relative h-80 sm:h-96 md:h-125 lg:h-150 rounded-3xl overflow-hidden group"
         >
           {/* Image Container */}

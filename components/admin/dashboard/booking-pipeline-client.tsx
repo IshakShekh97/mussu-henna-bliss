@@ -14,8 +14,6 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Booking } from "@/lib/zodSchemas";
-import { ViewBookingDialog } from "@/components/admin/bookings/view-booking-dialog";
-import { HandoffDialog } from "@/components/admin/bookings/handoff-dialog";
 
 interface BookingPipelineClientProps {
   initialBookings: Booking[];
@@ -24,14 +22,6 @@ interface BookingPipelineClientProps {
 export function BookingPipelineClient({ initialBookings }: BookingPipelineClientProps) {
   const router = useRouter();
   const [bookings, setBookings] = useState<Booking[]>(initialBookings);
-  const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null);
-
-  // Dialog States
-  const [viewDialogOpen, setViewDialogOpen] = useState(false);
-  const [handoffOpen, setHandoffOpen] = useState(false);
-  const [generatedLink, setGeneratedLink] = useState("");
-  const [generatedBookingId, setGeneratedBookingId] = useState("");
-
   const [isPending, startTransition] = useTransition();
 
   const handleOpenEdit = (booking: Booking) => {
@@ -65,17 +55,6 @@ export function BookingPipelineClient({ initialBookings }: BookingPipelineClient
       }),
     );
   };
-
-  const handleQuoteSuccess = (link: string, bookingId: string) => {
-    setGeneratedLink(link);
-    setGeneratedBookingId(bookingId);
-    setViewDialogOpen(false);
-    setHandoffOpen(true);
-  };
-
-  // Sync details resolver
-  const selectedBooking =
-    bookings.find((b) => b.id === selectedBookingId) || null;
 
   return (
     <Card className="lg:col-span-2 bg-[#FDFBF7] border-[#EBE4DC] shadow-xs flex flex-col">
@@ -160,31 +139,16 @@ export function BookingPipelineClient({ initialBookings }: BookingPipelineClient
                   </div>
 
                   <div className="flex sm:justify-end shrink-0">
-                    {isPendingQuote ? (
-                      <Button
-                        size="sm"
-                        onClick={() => {
-                          setSelectedBookingId(booking.id);
-                          setViewDialogOpen(true);
-                        }}
-                        className="bg-primary hover:bg-primary/90 text-white font-medium shadow-sm cursor-pointer select-none active:scale-[0.98] transition-transform flex items-center gap-1.5"
-                      >
-                        <Sparkles className="h-3.5 w-3.5" />
-                        Review & Send Quote
-                      </Button>
-                    ) : (
-                      <button
-                        onClick={() => {
-                          setSelectedBookingId(booking.id);
-                          setViewDialogOpen(true);
-                        }}
-                        className="cursor-pointer text-left"
-                      >
-                        <Badge className="bg-amber-50 text-amber-700 border border-amber-200 text-3xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-lg select-none hover:opacity-85">
-                          Awaiting Response
-                        </Badge>
-                      </button>
-                    )}
+                    <Button
+                      size="sm"
+                      onClick={() => {
+                        router.push(`/admin/bookings/${booking.id}`);
+                      }}
+                      className="bg-primary hover:bg-primary/90 text-white font-medium shadow-sm cursor-pointer select-none active:scale-[0.98] transition-transform flex items-center gap-1.5"
+                    >
+                      <Sparkles className="h-3.5 w-3.5" />
+                      {isPendingQuote ? "Review & Send Quote" : "View Booking"}
+                    </Button>
                   </div>
                 </div>
               );
@@ -192,23 +156,6 @@ export function BookingPipelineClient({ initialBookings }: BookingPipelineClient
           </div>
         )}
       </CardContent>
-
-      {/* Dialog Design exactly like bookings/page.tsx */}
-      <ViewBookingDialog
-        open={viewDialogOpen}
-        onOpenChange={setViewDialogOpen}
-        booking={selectedBooking}
-        onOpenEdit={handleOpenEdit}
-        onStatusChangeOptimistic={handleStatusChangeOptimistic}
-        onQuoteSuccess={handleQuoteSuccess}
-      />
-
-      <HandoffDialog
-        open={handoffOpen}
-        onOpenChange={setHandoffOpen}
-        generatedLink={generatedLink}
-        booking={selectedBooking}
-      />
     </Card>
   );
 }

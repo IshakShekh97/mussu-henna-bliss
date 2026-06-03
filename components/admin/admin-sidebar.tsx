@@ -96,18 +96,28 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
 
   return (
     <Sidebar
+      variant="sidebar"
       collapsible="icon"
       className="border-r border-[#EBE4DC] bg-[#FDFBF7]"
     >
-      <SidebarHeader className={cn(
-        "border-b border-[#EBE4DC] min-h-16 flex items-center transition-all duration-300",
-        isCollapsed ? "p-2 justify-center" : "p-4"
-      )}>
-        <Link href="/admin" className="flex items-center gap-2.5 overflow-hidden justify-center w-full">
-          <div className={cn(
-            "flex shrink-0 items-center justify-center bg-primary text-white font-serif font-bold shadow-md transition-all duration-300 hover:scale-105 select-none",
-            isCollapsed ? "h-8 w-8 rounded-lg text-base" : "h-9 w-9 rounded-xl text-lg"
-          )}>
+      <SidebarHeader
+        className={cn(
+          "border-b border-[#EBE4DC] min-h-16 flex items-center transition-all duration-300",
+          isCollapsed ? "p-2 justify-center" : "p-4",
+        )}
+      >
+        <Link
+          href="/admin"
+          className="flex items-center gap-2.5 overflow-hidden justify-center w-full"
+        >
+          <div
+            className={cn(
+              "flex shrink-0 items-center justify-center bg-primary text-white font-serif font-bold shadow-md transition-all duration-300 hover:scale-105 select-none",
+              isCollapsed
+                ? "h-8 w-8 rounded-lg text-base"
+                : "h-9 w-9 rounded-xl text-lg",
+            )}
+          >
             M
           </div>
           {!isCollapsed && (
@@ -147,17 +157,19 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
                         "hover:bg-primary/5 hover:text-primary transition-all duration-200 h-10 rounded-xl px-3",
                         isActive
                           ? "bg-primary/10 text-primary font-semibold"
-                          : "text-[#5C4D3E]"
+                          : "text-[#5C4D3E]",
                       )}
                     >
                       <Link href={item.url} className="flex items-center gap-3">
                         <item.icon
                           className={cn(
                             "h-5 w-5 shrink-0 transition-transform duration-200 group-hover:scale-105",
-                            isActive ? "text-primary" : "text-[#8C7A6B]"
+                            isActive ? "text-primary" : "text-[#8C7A6B]",
                           )}
                         />
-                        <span className="text-xs font-medium tracking-wide">{item.title}</span>
+                        <span className="text-xs font-medium tracking-wide">
+                          {item.title}
+                        </span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -181,7 +193,9 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
                 >
                   <Link href="/" className="flex items-center gap-3">
                     <Globe className="h-5 w-5 shrink-0 text-[#8C7A6B] transition-transform duration-200 group-hover:scale-105" />
-                    <span className="text-xs font-medium tracking-wide">Back to Website</span>
+                    <span className="text-xs font-medium tracking-wide">
+                      Back to Website
+                    </span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -190,10 +204,12 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className={cn(
-        "border-t border-[#EBE4DC] bg-[#FAF6F0] transition-all duration-300",
-        isCollapsed ? "p-2" : "p-3"
-      )}>
+      <SidebarFooter
+        className={cn(
+          "border-t border-[#EBE4DC] bg-[#FAF6F0] transition-all duration-300",
+          isCollapsed ? "p-2" : "p-3",
+        )}
+      >
         <SidebarMenu>
           <SidebarMenuItem>
             <DropdownMenu>
@@ -202,7 +218,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
                   size="lg"
                   className={cn(
                     "w-full justify-between hover:bg-primary/5 text-[#5C4D3E] transition-all duration-200 rounded-xl",
-                    isCollapsed ? "h-8 p-0" : "h-12 px-3"
+                    isCollapsed ? "h-8 p-0" : "h-12 px-3",
                   )}
                 >
                   <div className="flex items-center gap-2 overflow-hidden">

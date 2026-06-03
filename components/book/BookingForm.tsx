@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Sparkles, Users, Calendar, Plus, Minus, Send, Paintbrush, Layers, Settings, Flower } from "lucide-react";
+import { motion } from "framer-motion";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -20,6 +21,29 @@ import { cn } from "@/lib/utils";
 import TulipSeprator from "../common/TulipSeprator";
 import { bookingFormSchemaType, bookingSchema } from "@/lib/zodSchemas";
 import { createCustomerBooking } from "@/app/actions/booking.action";
+
+const formVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const sectionVariants = {
+  hidden: { opacity: 0, y: 25 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: "spring" as const,
+      stiffness: 90,
+      damping: 15,
+    },
+  },
+};
 
 export function BookingForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -143,12 +167,18 @@ export function BookingForm() {
   }
 
   return (
-    <form
+    <motion.form
       onSubmit={form.handleSubmit(onSubmit)}
+      variants={formVariants}
+      initial="hidden"
+      animate="visible"
       className="space-y-8 w-full max-w-2xl pb-10 font-sans"
     >
       {/* SECTION 1: The Occasion */}
-      <section className="rounded-2xl p-6 sm:p-8 space-y-5 bg-[#FDFBF7] border border-[#EBE4DC] shadow-sm relative overflow-hidden">
+      <motion.section
+        variants={sectionVariants}
+        className="rounded-2xl p-6 sm:p-8 space-y-5 bg-[#FDFBF7] border border-[#EBE4DC] shadow-sm relative overflow-hidden"
+      >
         <div className="absolute inset-1.5 border-[0.5px] border-[#EBE4DC]/60 rounded-xl pointer-events-none z-0" />
         <div className="relative z-10">
           <h2 className="text-xl font-bold tracking-tight text-gray-800 font-serif flex items-center gap-2">
@@ -171,8 +201,10 @@ export function BookingForm() {
                     const Icon = option.icon;
                     const isSelected = !isCustomOccasion && field.value === option.value;
                     return (
-                      <label
+                      <motion.label
                         key={option.value}
+                        whileHover={{ scale: 1.02, y: -2 }}
+                        whileTap={{ scale: 0.98 }}
                         className={cn(
                           "relative flex flex-col p-5 rounded-xl border cursor-pointer hover:border-primary/50 transition-all duration-300 group select-none text-left bg-white",
                           isSelected
@@ -194,7 +226,7 @@ export function BookingForm() {
                               "p-2 rounded-lg transition-colors",
                               isSelected
                                 ? "bg-primary/10 text-primary"
-                                : "bg-gray-100 text-gray-400 group-hover:text-primary group-hover:bg-primary/5"
+                               : "bg-gray-100 text-gray-400 group-hover:text-primary group-hover:bg-primary/5"
                             )}
                           >
                             <Icon className="h-5 w-5" />
@@ -209,14 +241,16 @@ export function BookingForm() {
                         <span className="text-[10px] text-muted-foreground mt-1.5 leading-normal font-light">
                           {option.description}
                         </span>
-                      </label>
+                      </motion.label>
                     );
                   })}
                 </div>
 
                 {/* Custom Occasion Option Trigger */}
                 <div className="flex justify-start">
-                  <label
+                  <motion.label
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
                     className={cn(
                       "flex items-center gap-2 px-4 py-2 border rounded-xl text-xs font-semibold cursor-pointer transition-all select-none",
                       isCustomOccasion
@@ -234,7 +268,7 @@ export function BookingForm() {
                     />
                     <Plus className="w-3.5 h-3.5" />
                     Custom / Other Occasion
-                  </label>
+                  </motion.label>
                 </div>
 
                 {/* Custom Occasion Text Input */}
@@ -258,12 +292,15 @@ export function BookingForm() {
             )}
           />
         </div>
-      </section>
+      </motion.section>
 
       <TulipSeprator variant="wavy" />
 
       {/* SECTION 2: Time & Place */}
-      <section className="rounded-2xl p-6 sm:p-8 space-y-5 bg-[#FDFBF7] border border-[#EBE4DC] shadow-sm relative overflow-hidden">
+      <motion.section
+        variants={sectionVariants}
+        className="rounded-2xl p-6 sm:p-8 space-y-5 bg-[#FDFBF7] border border-[#EBE4DC] shadow-sm relative overflow-hidden"
+      >
         <div className="absolute inset-1.5 border-[0.5px] border-[#EBE4DC]/60 rounded-xl pointer-events-none z-0" />
         <div className="relative z-10">
           <h2 className="text-xl font-bold tracking-tight text-gray-800 font-serif flex items-center gap-2">
@@ -327,12 +364,15 @@ export function BookingForm() {
             )}
           />
         </div>
-      </section>
+      </motion.section>
 
       <TulipSeprator variant="wavy" />
 
       {/* SECTION 3: Henna Preferences */}
-      <section className="rounded-2xl p-6 sm:p-8 space-y-5 bg-[#FDFBF7] border border-[#EBE4DC] shadow-sm relative overflow-hidden">
+      <motion.section
+        variants={sectionVariants}
+        className="rounded-2xl p-6 sm:p-8 space-y-5 bg-[#FDFBF7] border border-[#EBE4DC] shadow-sm relative overflow-hidden"
+      >
         <div className="absolute inset-1.5 border-[0.5px] border-[#EBE4DC]/60 rounded-xl pointer-events-none z-0" />
         <div className="relative z-10">
           <h2 className="text-xl font-bold tracking-tight text-gray-800 font-serif flex items-center gap-2">
@@ -358,9 +398,11 @@ export function BookingForm() {
                   {hennaStyleOptions.map((style) => {
                     const isSelected = field.value === style;
                     return (
-                      <button
+                      <motion.button
                         key={style}
                         type="button"
+                        whileHover={{ scale: 1.03 }}
+                        whileTap={{ scale: 0.97 }}
                         onClick={() => field.onChange(style)}
                         className={cn(
                           "px-4 py-2 border rounded-xl text-xs font-semibold cursor-pointer transition-all select-none",
@@ -370,7 +412,7 @@ export function BookingForm() {
                         )}
                       >
                         {style}
-                      </button>
+                      </motion.button>
                     );
                   })}
                 </div>
@@ -391,9 +433,11 @@ export function BookingForm() {
                   {hennaTypeOptions.map((type) => {
                     const isSelected = field.value === type;
                     return (
-                      <button
+                      <motion.button
                         key={type}
                         type="button"
+                        whileHover={{ scale: 1.03 }}
+                        whileTap={{ scale: 0.97 }}
                         onClick={() => field.onChange(type)}
                         className={cn(
                           "px-4 py-2 border rounded-xl text-xs font-semibold cursor-pointer transition-all select-none",
@@ -403,7 +447,7 @@ export function BookingForm() {
                         )}
                       >
                         {type}
-                      </button>
+                      </motion.button>
                     );
                   })}
                 </div>
@@ -427,9 +471,11 @@ export function BookingForm() {
                   {coverageOptions.map((coverageVal) => {
                     const isSelected = field.value === coverageVal;
                     return (
-                      <button
+                      <motion.button
                         key={coverageVal}
                         type="button"
+                        whileHover={{ scale: 1.03 }}
+                        whileTap={{ scale: 0.97 }}
                         onClick={() => field.onChange(coverageVal)}
                         className={cn(
                           "px-4 py-2 border rounded-xl text-xs font-semibold cursor-pointer transition-all select-none",
@@ -439,7 +485,7 @@ export function BookingForm() {
                         )}
                       >
                         {coverageVal}
-                      </button>
+                      </motion.button>
                     );
                   })}
                 </div>
@@ -447,12 +493,15 @@ export function BookingForm() {
             )}
           />
         </div>
-      </section>
+      </motion.section>
 
       <TulipSeprator variant="wavy" />
 
       {/* SECTION 4: Design Requirements & Details */}
-      <section className="rounded-2xl p-6 sm:p-8 space-y-5 bg-[#FDFBF7] border border-[#EBE4DC] shadow-sm relative overflow-hidden">
+      <motion.section
+        variants={sectionVariants}
+        className="rounded-2xl p-6 sm:p-8 space-y-5 bg-[#FDFBF7] border border-[#EBE4DC] shadow-sm relative overflow-hidden"
+      >
         <div className="absolute inset-1.5 border-[0.5px] border-[#EBE4DC]/60 rounded-xl pointer-events-none z-0" />
         <div className="relative z-10">
           <h2 className="text-xl font-bold tracking-tight text-gray-800 font-serif flex items-center gap-2">
@@ -539,12 +588,15 @@ export function BookingForm() {
             )}
           />
         </div>
-      </section>
+      </motion.section>
 
       <TulipSeprator variant="wavy" />
 
       {/* SECTION 5: Contact & Handoff */}
-      <section className="rounded-2xl p-6 sm:p-8 space-y-5 bg-[#FDFBF7] border border-[#EBE4DC] shadow-sm relative overflow-hidden">
+      <motion.section
+        variants={sectionVariants}
+        className="rounded-2xl p-6 sm:p-8 space-y-5 bg-[#FDFBF7] border border-[#EBE4DC] shadow-sm relative overflow-hidden"
+      >
         <div className="absolute inset-1.5 border-[0.5px] border-[#EBE4DC]/60 rounded-xl pointer-events-none z-0" />
         <div className="relative z-10">
           <h2 className="text-xl font-bold tracking-tight text-gray-800 font-serif flex items-center gap-2">
@@ -644,12 +696,12 @@ export function BookingForm() {
             />
           </div>
         </div>
-      </section>
+      </motion.section>
 
       <TulipSeprator variant="wavy" />
 
       {/* SECTION 6: Submit Action */}
-      <div className="space-y-4 pt-2">
+      <motion.div variants={sectionVariants} className="space-y-4 pt-2">
         <Button
           type="submit"
           className="w-full py-6 text-base font-semibold tracking-wide bg-primary hover:bg-primary/95 text-white rounded-xl transition-all duration-300 shadow-md shadow-primary/10 hover:shadow-lg flex items-center justify-center gap-2 select-none hover:scale-[1.005] active:scale-[0.995] cursor-pointer"
@@ -671,8 +723,7 @@ export function BookingForm() {
         <p className="text-center text-[10px] text-muted-foreground max-w-md mx-auto leading-relaxed font-light">
           Submitting this booking request does not require any payment today. Muskan will follow up to negotiate dates and prepare your quote.
         </p>
-      </div>
-    </form>
+      </motion.div>
+    </motion.form>
   );
 }
-
