@@ -29,7 +29,7 @@ const FadeIn = ({
   duration = 0.6,
   className,
   once = true,
-  amount = 0.3,
+  amount = 0.05,
 }: FadeInProps) => {
   const offset = directionOffsets[direction];
 

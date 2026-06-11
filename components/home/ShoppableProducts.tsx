@@ -6,6 +6,8 @@ import { getProducts } from "@/app/actions/product.action";
 import { Flower } from "lucide-react";
 import { SectionHeader, GoldShimmer } from "@/components/animations";
 
+export const dynamic = "force-dynamic";
+
 // Premium gold shimmer skeleton matching ProductCard design
 function ProductsSkeleton() {
   return (

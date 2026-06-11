@@ -2,14 +2,22 @@
 
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-import { updateOrderSchema, type updateOrderSchemaType, manualOrderCreateSchema, type manualOrderCreateSchemaType } from "@/lib/zodSchemas";
+import {
+  updateOrderSchema,
+  type updateOrderSchemaType,
+  manualOrderCreateSchema,
+  type manualOrderCreateSchemaType,
+} from "@/lib/zodSchemas";
 import nodemailer from "nodemailer";
 import { sendEmail } from "@/lib/email";
+import { checkAuth } from "@/lib/checkAuth";
 
 /**
  * Fetches all orders, including items and product details.
  */
 export async function getOrders() {
+  await checkAuth();
+
   try {
     const orders = await prisma.order.findMany({
       include: {
@@ -37,7 +45,11 @@ export async function getOrders() {
 /**
  * Updates an order's status and payment method.
  */
-export async function updateOrder(orderId: string, data: updateOrderSchemaType) {
+export async function updateOrder(
+  orderId: string,
+  data: updateOrderSchemaType,
+) {
+  await checkAuth();
   try {
     const parsed = updateOrderSchema.safeParse(data);
     if (!parsed.success) {
@@ -67,10 +79,11 @@ export async function updateOrder(orderId: string, data: updateOrderSchemaType) 
 }
 
 /**
- * Marks an order as PAID & FULFILLED, dispatches Nodemailer HTML receipt, 
+ * Marks an order as PAID & FULFILLED, dispatches Nodemailer HTML receipt,
  * and returns prefilled WhatsApp tracking deep-link text.
  */
 export async function markAsPaidAndShip(orderId: string) {
+  await checkAuth();
   try {
     // 1. Fetch order details with products
     const order = await prisma.order.findUnique({
@@ -137,7 +150,7 @@ export async function markAsPaidAndShip(orderId: string) {
                 ₹${(item.quantity * item.priceAtPurchase).toFixed(2)}
               </td>
             </tr>
-          `
+          `,
           )
           .join("");
 
@@ -232,21 +245,27 @@ export async function markAsPaidAndShip(orderId: string) {
 
         console.log(`[SMTP NodeMailer] Receipt sent to ${order.email}`);
       } catch (smtpErr) {
-        console.error("Nodemailer transmission warning (SMTP auth/connection issue):", smtpErr);
+        console.error(
+          "Nodemailer transmission warning (SMTP auth/connection issue):",
+          smtpErr,
+        );
       }
     } else {
-      console.log("[SMTP NodeMailer] Ignored: SMTP_USER and SMTP_PASS variables not set in .env.");
+      console.log(
+        "[SMTP NodeMailer] Ignored: SMTP_USER and SMTP_PASS variables not set in .env.",
+      );
     }
 
     // 5. Generate WhatsApp tracking text and construct response
     const formattedId = order.id.slice(0, 8).toUpperCase();
     const cleanPhone = order.phone.replace(/\D/g, "");
     // Ensure country code is present (Indian code 91 if phone is 10 digits)
-    const phoneWithCode = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone;
-    
+    const phoneWithCode =
+      cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone;
+
     const trackingLink = `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"}/status/${order.id}`;
     const whatsappMessage = `Hi ${order.customerName}! Your order #${formattedId} has been packaged and is on its way. Track its progress here: ${trackingLink}`;
-    
+
     return {
       success: true,
       order: updatedOrder,
@@ -266,6 +285,7 @@ export async function markAsPaidAndShip(orderId: string) {
  * Creates a manual order in the database and updates product stock levels.
  */
 export async function createManualOrder(data: manualOrderCreateSchemaType) {
+  await checkAuth();
   try {
     const parsed = manualOrderCreateSchema.safeParse(data);
     if (!parsed.success) {
@@ -273,7 +293,15 @@ export async function createManualOrder(data: manualOrderCreateSchemaType) {
       return { success: false, error: errorMessage || "Invalid input data" };
     }
 
-    const { customerName, email, phone, address, status, paymentMethod, items } = parsed.data;
+    const {
+      customerName,
+      email,
+      phone,
+      address,
+      status,
+      paymentMethod,
+      items,
+    } = parsed.data;
 
     // Fetch products from database to calculate pricing and check availability
     const productIds = items.map((item) => item.productId);
@@ -286,7 +314,11 @@ export async function createManualOrder(data: manualOrderCreateSchemaType) {
     const productMap = new Map(dbProducts.map((p) => [p.id, p]));
 
     let calculatedTotal = 0;
-    const itemsToCreate: { productId: string; quantity: number; priceAtPurchase: number }[] = [];
+    const itemsToCreate: {
+      productId: string;
+      quantity: number;
+      priceAtPurchase: number;
+    }[] = [];
 
     for (const item of items) {
       const product = productMap.get(item.productId);
@@ -302,7 +334,10 @@ export async function createManualOrder(data: manualOrderCreateSchemaType) {
 
       // Deduct stock
       if (product.stock < item.quantity) {
-        return { success: false, error: `Insufficient stock for product: ${product.name}` };
+        return {
+          success: false,
+          error: `Insufficient stock for product: ${product.name}`,
+        };
       }
     }
 
@@ -424,7 +459,7 @@ export async function cancelOrderAction(orderId: string, cause: string) {
             ₹${(item.quantity * item.priceAtPurchase).toFixed(2)}
           </td>
         </tr>
-      `
+      `,
       )
       .join("");
 
@@ -512,7 +547,7 @@ export async function cancelOrderAction(orderId: string, cause: string) {
 export async function sendOrderEmailAction(
   orderId: string,
   subject: string,
-  bodyHtml: string
+  bodyHtml: string,
 ) {
   try {
     if (!orderId) {
@@ -573,4 +608,3 @@ export async function sendOrderEmailAction(
     return { success: false, error: error.message || "Failed to send email" };
   }
 }
-

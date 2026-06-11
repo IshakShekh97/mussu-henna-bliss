@@ -1,7 +1,5 @@
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { redirect } from "next/navigation";
-
 export const checkAuth = async () => {
   "use server";
   const session = await auth.api.getSession({
@@ -9,6 +7,6 @@ export const checkAuth = async () => {
   });
 
   if (!session) {
-    return redirect("/admin/login");
+    throw new Error("unauthorised");
   }
 };

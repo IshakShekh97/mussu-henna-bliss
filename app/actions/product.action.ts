@@ -156,6 +156,29 @@ export async function deleteProduct(id: string) {
     return { success: true, product };
   } catch (error: any) {
     console.error("Failed to delete product:", error);
+
+    const errorMessage = error?.message || "";
+    const causeMessage = error?.cause?.message || "";
+    const originalMessage = error?.cause?.originalMessage || "";
+    const detailMessage = error?.detail || error?.cause?.detail || "";
+
+    const isForeignKeyViolation =
+      error?.code === "P2003" ||
+      errorMessage.includes("foreign key constraint") ||
+      errorMessage.includes("violates RESTRICT setting") ||
+      causeMessage.includes("foreign key constraint") ||
+      causeMessage.includes("violates RESTRICT setting") ||
+      originalMessage.includes("foreign key constraint") ||
+      originalMessage.includes("violates RESTRICT setting") ||
+      detailMessage.includes("referenced from table");
+
+    if (isForeignKeyViolation) {
+      return {
+        success: false,
+        error: "Cannot delete this product because it has been purchased in past orders. You can set its stock to 0 or hide it from the storefront instead.",
+      };
+    }
+
     return {
       success: false,
       error: error.message || "Failed to delete product",

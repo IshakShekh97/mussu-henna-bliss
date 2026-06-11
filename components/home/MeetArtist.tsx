@@ -46,9 +46,13 @@ const values = [
 ];
 
 const imageRevealVariants = {
-  hidden: { clipPath: "circle(1% at 50% 50%)", opacity: 0, scale: 0.95 },
+  hidden: {
+    clipPath: "inset(10% 10% 10% 10% rounded 24px)",
+    opacity: 0,
+    scale: 0.95,
+  },
   visible: {
-    clipPath: "circle(100% at 50% 50%)",
+    clipPath: "inset(0% 0% 0% 0% rounded 24px)",
     opacity: 1,
     scale: 1,
     transition: {
@@ -91,7 +95,7 @@ const MeetArtist = () => {
               priority
             />
             {/* Sophisticated Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-tr from-black/40 via-transparent to-primary/20" />
+            <div className="absolute inset-0 bg-linear-to-tr from-black/40 via-transparent to-primary/20" />
           </div>
 
           {/* Floating Experience Badge */}
@@ -111,7 +115,7 @@ const MeetArtist = () => {
           </motion.div>
 
           {/* Bottom Info Card */}
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-6 sm:p-8">
+          <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/80 via-black/40 to-transparent p-6 sm:p-8">
             <div className="flex items-center gap-3 mb-2">
               <div className="w-1 h-6 sm:h-8 bg-primary rounded-full" />
               <h3 className="text-white text-base sm:text-lg font-light">
@@ -220,7 +224,7 @@ const MeetArtist = () => {
               >
                 {/* Background Gradient */}
                 <div
-                  className={`absolute inset-0 bg-gradient-to-br ${step.color}`}
+                  className={`absolute inset-0 bg-linear-to-br ${step.color}`}
                 />
 
                 {/* Border Effect */}
@@ -248,7 +252,7 @@ const MeetArtist = () => {
 
                 {/* Connector Line (hidden on last and mobile) */}
                 {idx < processSteps.length - 1 && (
-                  <div className="hidden md:block absolute -right-3 top-1/2 w-6 h-0.5 bg-gradient-to-r from-primary/50 to-transparent" />
+                  <div className="hidden md:block absolute -right-3 top-1/2 w-6 h-0.5 bg-linear-to-r from-primary/50 to-transparent" />
                 )}
               </motion.div>
             );
@@ -258,15 +262,14 @@ const MeetArtist = () => {
 
       {/* CTA Section */}
       <FadeIn direction="up" delay={0.2}>
-        <div className="mt-14 md:mt-16 bg-gradient-to-r from-primary/15 to-primary/5 rounded-3xl p-6 sm:p-8 md:p-12 text-center border border-primary/30 relative overflow-hidden">
+        <div className="mt-14 md:mt-16 bg-linear-to-r from-primary/15 to-primary/5 rounded-3xl p-6 sm:p-8 md:p-12 text-center border border-primary/30 relative overflow-hidden">
           {/* Animated gradient border effect */}
-          <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-primary/20 via-transparent to-primary/20 animate-gradient-rotate opacity-50" />
+          <div className="absolute inset-0 rounded-3xl bg-linear-to-r from-primary/20 via-transparent to-primary/20 animate-gradient-rotate opacity-50" />
 
           <div className="relative z-10">
             <h3 className="font-morlana text-2xl sm:text-3xl md:text-4xl font-light mb-3 sm:mb-4">
               Ready for Your{" "}
-              <span className="text-primary font-black">Henna Experience</span>
-              ?
+              <span className="text-primary font-black">Henna Experience</span>?
             </h3>
             <p className="text-muted-foreground font-light text-sm sm:text-base md:text-lg mb-6 sm:mb-8 max-w-2xl mx-auto">
               No complicated forms. No waiting. Just select your date and{" "}

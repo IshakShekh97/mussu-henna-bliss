@@ -3,7 +3,11 @@ import ProductGrid from "@/components/shop/ProductGrid";
 import ShopSkeleton from "@/components/shop/ShopSkeleton";
 import React, { Suspense } from "react";
 import { Leaf, Clock, Droplet, Truck, Snowflake, Sun } from "lucide-react";
-import { SectionHeader, FadeIn, StaggerContainer } from "@/components/animations";
+import {
+  SectionHeader,
+  FadeIn,
+  StaggerContainer,
+} from "@/components/animations";
 
 const trustBadges = [
   {
@@ -78,7 +82,7 @@ const Shoppage = () => {
       />
 
       <TulipSeprator variant="wavy" className="my-10" />
-      
+
       <Suspense fallback={<ShopSkeleton />}>
         <ProductGrid />
       </Suspense>

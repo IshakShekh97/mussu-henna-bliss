@@ -1,5 +1,6 @@
 import { getProducts } from "@/app/actions/product.action";
 import ProductGridClient from "./ProductGridClient";
+export const dynamic = "force-dynamic";
 
 export default async function ProductGrid() {
   const result = await getProducts();
@@ -28,4 +29,3 @@ export default async function ProductGrid() {
     </section>
   );
 }
-

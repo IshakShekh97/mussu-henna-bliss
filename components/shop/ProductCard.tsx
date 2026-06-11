@@ -212,7 +212,7 @@ export default function ProductCard({ product }: { product: Product }) {
 
       {/* Elegant Quick View Dialog */}
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="max-w-2xl! bg-[#FDFBF7] border border-[#EBE4DC] p-6 md:p-8 rounded-2xl shadow-xl overflow-hidden w-full!">
+        <DialogContent className="max-w-2xl! bg-[#FDFBF7] border border-[#EBE4DC] p-6 md:p-8 rounded-2xl shadow-xl overflow-y-auto max-h-[90vh] w-full!  ">
           {/* Decorative Inner Border */}
           <div className="absolute inset-1.5 border-[0.5px] border-[#EBE4DC]/60 rounded-xl pointer-events-none z-0" />
 
@@ -232,7 +232,7 @@ export default function ProductCard({ product }: { product: Product }) {
 
           <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
             {/* Left side: Image */}
-            <div className="relative aspect-square rounded-xl overflow-hidden bg-white border border-[#EBE4DC] shadow-sm flex items-center justify-center">
+            <div className="relative w-full max-w-[240px] md:max-w-none aspect-square mx-auto rounded-xl overflow-hidden bg-white border border-[#EBE4DC] shadow-sm flex items-center justify-center">
               <img
                 src={productImageUrl}
                 alt={product.name}

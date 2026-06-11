@@ -4,6 +4,7 @@ import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { bookingSchema, type bookingFormSchemaType } from "@/lib/zodSchemas";
 import { sendEmail } from "@/lib/email";
+import { checkAuth } from "@/lib/checkAuth";
 
 /**
  * Creates a new booking from the customer storefront form.
@@ -133,12 +134,16 @@ ${vision}`;
                     </tr>
                   </table>
 
-                  ${booking.designNotes ? `
+                  ${
+                    booking.designNotes
+                      ? `
                     <h3 style="font-size: 14px; color: #4E3E2F; font-weight: bold; margin-bottom: 10px;">Design vision & Notes</h3>
                     <div style="background-color: #FAF6F0; padding: 15px; border-radius: 8px; border: 1px solid #EBE4DC; font-style: italic; font-size: 13px; color: #5C4D3E; line-height: 1.5; margin-bottom: 25px; white-space: pre-wrap;">
                       ${booking.designNotes}
                     </div>
-                  ` : ''}
+                  `
+                      : ""
+                  }
 
                   <!-- Admin Button -->
                   <div style="text-align: center; margin: 30px 0;">
@@ -162,7 +167,10 @@ ${vision}`;
           html: adminEmailHtml,
         });
       } catch (emailErr) {
-        console.error("Failed to email admin regarding booking request:", emailErr);
+        console.error(
+          "Failed to email admin regarding booking request:",
+          emailErr,
+        );
       }
     }
 
@@ -188,6 +196,8 @@ export async function sendBookingQuote(
   newTime?: string,
 ) {
   try {
+    await checkAuth();
+
     if (!bookingId) {
       return { success: false, error: "Booking ID is required" };
     }
@@ -259,6 +269,8 @@ export async function createBooking(data: {
   quotedPrice?: number;
   artistNotes?: string;
 }) {
+  await checkAuth();
+
   try {
     const booking = await prisma.booking.create({
       data: {
@@ -286,10 +298,9 @@ export async function createBooking(data: {
   }
 }
 
-/**
- * Transitions a booking's status to COMPLETED.
- */
 export async function completeBooking(bookingId: string) {
+  await checkAuth();
+
   try {
     const booking = await prisma.booking.update({
       where: { id: bookingId },
@@ -309,10 +320,9 @@ export async function completeBooking(bookingId: string) {
   }
 }
 
-/**
- * Deletes a booking from the database.
- */
 export async function deleteBooking(bookingId: string) {
+  await checkAuth();
+
   try {
     const booking = await prisma.booking.delete({
       where: { id: bookingId },
@@ -335,6 +345,8 @@ export async function deleteBooking(bookingId: string) {
  * Fetches all bookings from the database.
  */
 export async function getBookings() {
+  await checkAuth();
+
   try {
     const bookings = await prisma.booking.findMany({
       orderBy: { createdAt: "desc" },
@@ -357,6 +369,8 @@ export async function updateBookingStatus(
   bookingId: string,
   status: "PENDING_QUOTE" | "QUOTED" | "ACCEPTED" | "COMPLETED" | "CANCELLED",
 ) {
+  await checkAuth();
+
   try {
     if (!bookingId) {
       return { success: false, error: "Booking ID is required" };
@@ -399,6 +413,8 @@ export async function updateBooking(
     status: "PENDING_QUOTE" | "QUOTED" | "ACCEPTED" | "COMPLETED" | "CANCELLED";
   },
 ) {
+  await checkAuth();
+
   try {
     if (!bookingId) {
       return { success: false, error: "Booking ID is required" };
@@ -438,6 +454,8 @@ export async function updateBooking(
  * Fetches the recent booking requests pipeline (Needs Attention: latest 5 PENDING_QUOTE or QUOTED bookings).
  */
 export async function getRecentBookingRequests() {
+  await checkAuth();
+
   try {
     const bookings = await prisma.booking.findMany({
       where: {
@@ -465,8 +483,10 @@ export async function getRecentBookingRequests() {
 export async function sendBookingEmailAction(
   bookingId: string,
   subject: string,
-  bodyHtml: string
+  bodyHtml: string,
 ) {
+  await checkAuth();
+
   try {
     if (!bookingId) {
       return { success: false, error: "Booking ID is required" };
@@ -526,4 +546,3 @@ export async function sendBookingEmailAction(
     return { success: false, error: error.message || "Failed to send email" };
   }
 }
-

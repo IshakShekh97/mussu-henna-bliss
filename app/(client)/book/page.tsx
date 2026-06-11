@@ -3,7 +3,11 @@ import { Metadata } from "next";
 import Image from "next/image";
 import { BookingForm } from "@/components/book/BookingForm";
 import TulipSeprator from "@/components/common/TulipSeprator";
-import { SectionHeader, FadeIn, StaggerContainer } from "@/components/animations";
+import {
+  SectionHeader,
+  FadeIn,
+  StaggerContainer,
+} from "@/components/animations";
 
 export const metadata: Metadata = {
   title: "Reserve Your Date | Mussu's Mehendi Bliss",
@@ -47,7 +51,7 @@ export default function BookingPage() {
                 priority
               />
               {/* Subtle Gradient Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
+              <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
             </div>
           </FadeIn>
 
@@ -84,7 +88,12 @@ export default function BookingPage() {
         </aside>
 
         {/* Right Column (Scrollable Form) */}
-        <FadeIn direction="right" delay={0.2} className="lg:col-span-6 w-full">
+        <FadeIn
+          direction="right"
+          delay={0.2}
+          className="lg:col-span-6 w-full"
+          amount={0.05}
+        >
           <main className="flex flex-col gap-6">
             <BookingForm />
           </main>

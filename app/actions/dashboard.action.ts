@@ -1,11 +1,14 @@
 "use server";
 
+import { checkAuth } from "@/lib/checkAuth";
 import prisma from "@/lib/prisma";
 
 /**
  * Fetches dashboard performance metrics (Gross Revenue, Pending Orders, Awaiting Quotes, Success Rate) from live data.
  */
 export async function getDashboardMetrics() {
+  await checkAuth();
+
   try {
     const orders = await prisma.order.findMany();
     const bookings = await prisma.booking.findMany();
@@ -76,6 +79,8 @@ export async function getDashboardMetrics() {
  * Fetches the booking requests pipeline (Needs Attention: latest 5 PENDING_QUOTE or QUOTED bookings).
  */
 export async function getBookingPipeline() {
+  await checkAuth();
+
   try {
     const bookings = await prisma.booking.findMany({
       where: {
@@ -102,6 +107,8 @@ export async function getBookingPipeline() {
  * Fetches products from database, applies the low stock calculation, and returns items under 15 stock count.
  */
 export async function getInventoryWatch() {
+  await checkAuth();
+
   try {
     const dbProducts = await prisma.product.findMany();
 
@@ -126,6 +133,7 @@ export async function getInventoryWatch() {
  * Fetches the recent retail orders (latest 5 orders).
  */
 export async function getFulfillmentFeed() {
+  await checkAuth();
   try {
     const orders = await prisma.order.findMany({
       orderBy: { createdAt: "desc" },
