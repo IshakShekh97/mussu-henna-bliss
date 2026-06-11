@@ -376,6 +376,8 @@ export async function createManualOrder(data: manualOrderCreateSchemaType) {
 
     revalidatePath("/admin/orders");
     revalidatePath("/admin");
+    revalidatePath("/shop");
+    revalidatePath("/");
 
     return { success: true, orderId: order.id };
   } catch (error: any) {
@@ -440,6 +442,8 @@ export async function cancelOrderAction(orderId: string, cause: string) {
 
     revalidatePath("/admin/orders");
     revalidatePath("/admin");
+    revalidatePath("/shop");
+    revalidatePath("/");
 
     // Format items rows HTML
     const itemsRowsHtml = order.items

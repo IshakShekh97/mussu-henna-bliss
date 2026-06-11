@@ -52,6 +52,7 @@ export async function createProduct(data: ProductFormSchemaType) {
     revalidatePath("/admin/products");
     revalidatePath("/admin");
     revalidatePath("/shop"); // Clear storefront cache if dynamic caching is applied
+    revalidatePath("/");
 
     return { success: true, product };
   } catch (error: any) {
@@ -97,6 +98,7 @@ export async function updateProduct(id: string, data: ProductFormSchemaType) {
     revalidatePath("/admin/products");
     revalidatePath("/admin");
     revalidatePath("/shop");
+    revalidatePath("/");
 
     return { success: true, product };
   } catch (error: any) {
@@ -125,6 +127,7 @@ export async function toggleProductStock(id: string, inStock: boolean) {
     revalidatePath("/admin/products");
     revalidatePath("/admin");
     revalidatePath("/shop");
+    revalidatePath("/");
 
     return { success: true, product };
   } catch (error: any) {
@@ -152,6 +155,7 @@ export async function deleteProduct(id: string) {
     revalidatePath("/admin/products");
     revalidatePath("/admin");
     revalidatePath("/shop");
+    revalidatePath("/");
 
     return { success: true, product };
   } catch (error: any) {
